@@ -11,7 +11,7 @@ pygmentscodefences  = true
 pygmentscodefencesguesssyntax   = true
 
 # Google Analytics user code/key here
-# googleAnalytics = ""
+googleAnalytics = "UA-176773333-1"
 
 # Test this one out.
 # Might be the num. of words shown in post previews?
