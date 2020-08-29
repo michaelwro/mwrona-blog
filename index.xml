@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Michael Wrona&#39;s Blog</title>
+    <link>https://mwrona.com/</link>
+    <description>Recent content on Michael Wrona&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Copyright © Michael Wrona 2020</copyright>
+    <lastBuildDate>Wed, 26 Aug 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://mwrona.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>About the Author</title>
+      <link>https://mwrona.com/about/</link>
+      <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/about/</guid>
+      <description>Under Construction&amp;hellip;</description>
+    </item>
+    
+    <item>
+      <title>The &#39;Big Dealz&#39; PC Build</title>
+      <link>https://mwrona.com/posts/01-first-pc-flip/</link>
+      <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/posts/01-first-pc-flip/</guid>
+      <description>If you want to get the biggest bang for your buck when building a PC, you&amp;rsquo;re going to have to buy secondhand parts - there&amp;rsquo;s no denying it! Believe me, as someone whose net worth is defined primarily by electronics, you&amp;rsquo;re going to want to squeeze as much value as possible out of your limited tendies.</description>
+    </item>
+    
+  </channel>
+</rss>
