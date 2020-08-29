@@ -1,5 +1,5 @@
 # Configuration file for my blog site
-baseURL         = "https://mwrona.com"  # Base URL of the site
+baseURL         = "https://mwrona.com/"  # Base URL of the site
 languageCode    = "en-us"
 title       = "Michael Wrona's Blog"  # Website title. Shows up in the browser tab
 theme       = "ezhil"  # Website theme to use
