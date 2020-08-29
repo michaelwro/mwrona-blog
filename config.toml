@@ -1,0 +1,90 @@
+# Configuration file for my blog site
+baseURL         = "https://mwrona.com"  # Base URL of the site
+languageCode    = "en-us"
+title       = "Michael Wrona's Blog"  # Website title. Shows up in the browser tab
+theme       = "ezhil"  # Website theme to use
+paginate    = 6  # Number of blog posts per page
+
+# Code syntax highlighting styling
+pygmentsstyle       = "monokai"
+pygmentscodefences  = true
+pygmentscodefencesguesssyntax   = true
+
+# Google Analytics user code/key here
+# googleAnalytics = ""
+
+# Test this one out.
+# Might be the num. of words shown in post previews?
+summaryLength = 40
+
+# Copyright message at the page footer
+copyright = "Copyright © Michael Wrona 2020"
+
+
+[params]
+    # Website description
+    subtitle = "Engineering, coding, tech, and other cool projects!"
+    # disableDisqusTypes = ["page"]  # TODO: Figure out what this is?
+    # featherIconsCDN = true  # TODO: Figure out what this is?
+
+    # The ezhil theme can automatically switch between light and dark themes
+    # based on the user's device settings. Set to 'auto' to use this feature.
+    # Otherwise, for dark or light mode all the time, set to 'dark' or 'light'
+    mode = "dark"  # "dark", "light", or "auto"
+
+    # Custom CSS coloring can also be applied. This should be in static/css/custom.css
+    # customCSS = ""  # Custom colorizing
+    customDarkCSS = "css/custom-dark.css"  # Custom CSS for dark mode
+
+    # Insert favicon image!
+    favicon = "favicon.png"
+
+    # SOCIAL LINKS
+    [[params.social]]
+        name = "Github"
+        icon = "github"
+        url = "https://github.com/michaelwro"
+    
+    
+
+# Configure website tabs here
+# Paths are relative
+# the 'weight' parameter controls the order of menu items
+[menu]
+
+    # MENU ITEMS
+    [[menu.main]]
+        name    = "Home"
+        url     = "/"
+        weight  = 1
+    
+    [[menu.main]]
+        name    = "All Posts"
+        url     = "/posts"
+        weight  = 2
+    
+    # TODO: ADD TAGS AND CATEGORIES FEATURES
+    [[menu.main]]
+        name    = "Post Tags"
+        url     = "/tags"
+        weight  = 3
+    
+    # [[menu.main]]
+    #     name = "Post Categories"
+    #     url = "/categories"
+    #     weight = 4
+
+    [[menu.main]]
+        name    = "About"
+        url     = "/about"
+        weight  = 5
+
+
+[taxonomies]
+    tag = "tags"
+    # category = "categories"
+
+
+
+
+

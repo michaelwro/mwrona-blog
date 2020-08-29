@@ -1,0 +1,10 @@
+{{ if .Get "src" }}
+<figure class="{{ with .Get "position"}}{{ . }}{{ else -}} left {{- end }}" >
+  <a href="{{ .Get "src" | safeURL }}" target="_blank">
+    <img src="{{ .Get "src" | safeURL }}" {{ with .Get "alt" }} alt="{{ . | plainify }}" {{ end }} {{ with .Get "width" }} width="{{ . | safeURL }}" {{ end }} {{ with .Get "style" }} style="{{ . | safeCSS }}" {{ end }} />
+  </a>
+  {{ if .Get "caption" }}
+    <figcaption class="{{ with .Get "captionPosition"}}{{ . }}{{ else -}} center {{- end }}" {{ with .Get "captionStyle" }} style="{{ . | safeCSS }}" {{ end }}>{{ .Get "caption" | markdownify }}</figcaption>
+  {{ end }}
+</figure>
+{{ end }}
