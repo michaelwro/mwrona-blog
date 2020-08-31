@@ -10,7 +10,7 @@ If you want to get the biggest bang for your buck when building a PC, you're goi
 
 I believe that most PC parts are totally acceptable to purchase secondhand, with a few exeptions[^1]. These parts are made to last years with proper care and usage. Proper care means not allowing a half-inch of dust accumulate inside your PC and on top of components (dust = no airflow = heat = bad), and proper usage means not overclocking components. I would say a large majority of PC users follow these guidelines, which means most PC parts are still, functionally, in great condition.
 
-{{< figure src="post-imgs/01-first-pc-flip/case-interior1.jpg" alt="Artsy shot of the computer."
+{{< figure src="/post-imgs/01-first-pc-flip/case-interior1.jpg" alt="Artsy shot of the computer."
 width="400px" position="center" style="border-radius: 8px;"
 caption="Artsy shot of the computer." captionPosition="center">}}
 
@@ -22,7 +22,7 @@ I wanted to see how many good PC part deals I could find in the Ames and Des Moi
 
 I went with the [Thermaltake Frio Silent](https://www.amazon.com/gp/product/B00TUKLAHI/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1) CPU cooler for its relatively low price, good cooling performance, and low noise. I picked it up for $25 on Amazon. I know this goes against the secondhand-only theme, but there weren't any good secondhand deals in my area :(
 
-{{< figure src="post-imgs/01-first-pc-flip/case-interior2.jpg" alt="View of the PC's inside."
+{{< figure src="/post-imgs/01-first-pc-flip/case-interior2.jpg" alt="View of the PC's inside."
 width="400px" position="center" style="border-radius: 8px;"
 caption="View of the PC's inside." captionPosition="center">}}
 
@@ -34,7 +34,7 @@ After a week or so of checking secondhand sites, I came across a great graphics 
 
 With the CPU, GPU, RAM, and motherboard - the most expensive parts - out of the way, I began to hunt around for a power supply. I found an older Antec 500W 80+ certified power supply for $20 not too far from my apartment. My only criteria for the PSU were that it had to be > 450W, had a PCIe power cable, and was in good contition. This one fit the bill just fine. I picked it up from a nice elderly lady, which wasn't too strange. What did catch me off-guard, however, was that she could answer my questions about computers fluently. I guess not all granneies are computer illiterate!
 
-{{< figure src="post-imgs/01-first-pc-flip/case-interior3.jpg" alt="Another picture of the PC."
+{{< figure src="/post-imgs/01-first-pc-flip/case-interior3.jpg" alt="Another picture of the PC."
 width="400px" position="center" style="border-radius: 8px;"
 caption="Another picture of the PC." captionPosition="center">}}
 
@@ -46,7 +46,7 @@ For storage, I picked up a Samsung 840 240GB SSD from my friend [Nathan](https:/
 
 Finally, for the case, I went with the [Rosewill FMB-X2 uATX Mini Tower](https://pcpartpicker.com/product/bHm323/rosewill-fbm-x2-microatx-mini-tower-case-fbm-x2) case, which I picked up for $35 online. Again, I know this goes against the secondhand parts only theme, but there weren't any good deals!
 
-{{< figure src="post-imgs/01-first-pc-flip/case-rear.jpg" alt="Rear of the PC."
+{{< figure src="/post-imgs/01-first-pc-flip/case-rear.jpg" alt="Rear of the PC."
 width="400px" position="center" style="border-radius: 8px;"
 caption="Rear of the PC." captionPosition="center">}}
 
@@ -54,11 +54,11 @@ caption="Rear of the PC." captionPosition="center">}}
 
 With all the parts in my posession, I began assembling the Big Dealz PC. Assembly went relatively smooth: the case had enough clearance to fit the CPU cooler and GPU, the motherboard fit fine, and it booted on the first try! Unfortunately, I did encounter one MAJOR problem. After completing the build, I began to wipe away fingerprints with 91% rubbing alcohol on a rag, which ended up being a HUGE mistake. I went to wipe down the front of the case, looked at my towel afterwards to see if there was any dirt, and realized it was jet black. I then frantically turned towards the PC case, and my heart dropped when I realized the entire front of the case had HUGE white streaks wherever I wiped with my rag. I guess the concentrated alcohol ate away at the cheap plastic and bleached the color or whatever coating the plastic had. I had the PC built and ready to go, but completely ruined the case. I then noticed that the streaks looked similar to white-bleached wood stain. Ah-ha, what a great observation that was! I decided that the best option to recover this case was to try and give it a wood texture. I diluted some rubbing alcohol with water and used paper towels to wipe the plastic front vertically. After a few rounds of brushing the case front with diluted rubbing alcohol, the result ended up looking halfway decent - a successful recovery!
 
-{{< figure src="post-imgs/01-first-pc-flip/case-product-front.jpg" alt="What the case originally looked like."
+{{< figure src="/post-imgs/01-first-pc-flip/case-product-front.jpg" alt="What the case originally looked like."
 width="400px" position="center" style="border-radius: 8px;"
 caption="What the case originally looked like." captionPosition="center">}}
 
-{{< figure src="post-imgs/01-first-pc-flip/case-front.jpg" alt="My wood grain-inspired solution."
+{{< figure src="/post-imgs/01-first-pc-flip/case-front.jpg" alt="My wood grain-inspired solution."
 width="400px" position="center" style="border-radius: 8px;"
 caption="My wood grain-inspired solution." captionPosition="center">}}
 
@@ -68,7 +68,7 @@ After using this computer for about a month, I can say that this was a really gr
 
 I hope you found this build story interesting and useful. I would highly recommend building a similar computer if you are looking for a budget-friendly, reliable, and wholesome PC capable of office productivity work and light to moderate gaming.
 
-{{< figure src="post-imgs/01-first-pc-flip/part-boxes.jpg" alt="Component boxes."
+{{< figure src="/post-imgs/01-first-pc-flip/part-boxes.jpg" alt="Component boxes."
 width="400px" position="center" style="border-radius: 8px;"
 caption="Component boxes." captionPosition="center">}}
 
