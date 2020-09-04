@@ -37,7 +37,7 @@ copyright = "Copyright © Michael Wrona 2020"
     customDarkCSS = "css/custom-dark.css"  # Custom CSS for dark mode
 
     # Insert favicon image!
-    favicon = "favicon.png"
+    favicon = "/favicon.png"
 
     # SOCIAL LINKS
     [[params.social]]
