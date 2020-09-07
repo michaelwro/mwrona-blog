@@ -3,7 +3,7 @@ title: "Quadcopter Flight Controller Project Intro"
 date: "2020-08-31"
 author: Michael Wrona
 draft: false
-tags: ["electronics", "drone"]
+tags: ["drone", "sensors"]
 ---
 
 Ever since I was first introduced to the world of flight dynamics and controls, I have wanted to design my own quadcopter flight controller from scratch. I thought it would be a great opportunity to apply my knowledge of electronics and circuitry, programming, and flight controls towards a real-world project. Unfortunately, my intense aerospace engineering coursework got in the way and never gave me enough time to get started. Now that I graduated from college and am spending a lot more time at home during the COVID-19 quarantine, now is a good of time as ever for me to get started with this project! This post will serve as a brief overview of the project and outline my short and long-term goals for it.

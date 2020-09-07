@@ -6,7 +6,7 @@ draft: false
 tags: ["PC Builds", "Budget"]
 ---
 
-If you want to get the biggest bang for your buck when building a PC, you're going to have to buy secondhand parts - there's no denying it! Believe me, as someone whose net worth is defined primarily by electronics, you're going to want to squeeze as much value as possible out of your limited tendies. Unfortunately, there seems to exist a bit of a stigma around buying used PC parts that prevents people from considering this option. I'm here to advocate against this stigma, and to tell you that it is simply not true!
+If you want to get the biggest bang for your buck when building a PC, you're going to have to buy secondhand parts - there's no denying it! Believe me, as someone whose net worth is defined primarily by electronics, you're going to want to squeeze as much value as possible out of your limited cash. Unfortunately, there seems to exist a bit of a stigma around buying used PC parts that prevents people from considering this option. I'm here to advocate against this stigma, and to tell you that it is simply not true!
 
 I believe that most PC parts are totally acceptable to purchase secondhand, with a few exeptions[^1]. These parts are made to last years with proper care and usage. Proper care means not allowing a half-inch of dust accumulate inside your PC and on top of components (dust = no airflow = heat = bad), and proper usage means not overclocking components. I would say a large majority of PC users follow these guidelines, which means most PC parts are still, functionally, in great condition.
 
