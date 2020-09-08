@@ -1,6 +1,6 @@
 ---
 title: "Read Serial Data From Spektrum Remote Receiver"
-date: "2020-09-02"
+date: "2020-09-07"
 author: Michael Wrona
 draft: false
 tags: ["arduino", "circuits", "c++", "drone", "programming"]
