@@ -7,17 +7,17 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © Michael Wrona 2020</copyright>
-    <lastBuildDate>Wed, 02 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 07 Sep 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://mwrona.com/tags/drone/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Read Serial Data From Spektrum Remote Receiver</title>
-      <link>https://mwrona.com/posts/03-read-spektrum-sat-data/</link>
-      <pubDate>Wed, 02 Sep 2020 00:00:00 +0000</pubDate>
+      <link>https://mwrona.com/posts/03-read-spektrum-rem-data/</link>
+      <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/03-read-spektrum-sat-data/</guid>
+      <guid>https://mwrona.com/posts/03-read-spektrum-rem-data/</guid>
       <description>About six years ago, I purchased a Spektrum DX6i RC plane transmitter to fly my RC planes with. Unfortunately, life got busier and my interests shifted, which sent my planes and controller to retire in the basement. When the idea to build a quadcopter flight controller began to come to fruition, I knew my DX6i controller would be perfect!</description>
     </item>
     
