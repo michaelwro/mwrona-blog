@@ -1,0 +1,68 @@
+/* Change background colors */
+body {
+	color: #dddddd;
+	background-color: #121212;
+}
+
+
+/* Text selection/highlight coloring, #666 default */
+::selection {
+    background: #e2bf9e;
+    text-shadow: none;
+}
+
+/* Mozilla Firefox highlight */
+::-moz-selection {
+    background: #e2bf9e;  /*#487cdb*/
+    text-shadow: none;
+}
+
+
+/* Site title text */
+.site-title a {
+	color: #6ad0ce;  /*#C35C51*/
+	text-decoration: none !important;
+	font-size: 48px;
+	font-weight: 800;
+}
+
+.site-title a:hover {
+	color: #6ad0ceb7;
+}
+
+
+/* Navigation menu and post link color */
+a {
+	color: #848ac5;
+}
+
+a:hover {
+	color: #848ac5b7;
+	text-decoration: none;
+}
+
+code.has-jax {
+	font: inherit;
+	font-size: 100%;
+	background: inherit !important;
+	border: inherit;
+	color: #dddddd;
+}
+
+/* code.has-jax {
+    -webkit-font-smoothing: antialiased;
+    background: inherit !important;
+    border: none !important;
+    font-size: 100%;
+} */
+
+/* Social links color */
+/* .site-description a,
+.site-description a:hover {
+	color: #b97969;
+	text-decoration: underline;
+} */
+
+
+/* TODO: Change table colors */
+
