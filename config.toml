@@ -63,22 +63,15 @@ copyright = "Copyright © Michael Wrona 2020"
         url     = "/posts"
         weight  = 2
     
-    # TODO: ADD TAGS AND CATEGORIES FEATURES
     [[menu.main]]
         name    = "Post Tags"
         url     = "/tags"
         weight  = 3
-    
-    # [[menu.main]]
-    #     name = "Post Categories"
-    #     url = "/categories"
-    #     weight = 4
 
     [[menu.main]]
         name    = "About"
         url     = "/about"
-        weight  = 5
-
+        weight  = 4
 
 [taxonomies]
     tag = "tags"
