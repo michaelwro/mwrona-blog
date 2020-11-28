@@ -11,16 +11,6 @@ Michael Wrona is a recent Aerospace Engineering graduate from Iowa State Univers
 His next step is to pursue graduate school and a PhD in Aerospace Engineering, focusing on orbital mechanics and control theory. He hopes to someday work for NASA as a GNC Engineer.
 
 In his free time, Michael enjoys cooking, playing his guitar, watching Netflix, reading sci-fi books, and tinkering with electronics.
-
-## Current PC Rig
-
-- **CPU:** Ryzen 3600 6C/12T
-- **GPU:** EVGA GTX 1070
-- **RAM:** 16GB (2x8GB) @ 3000MHz
-- **Mobo:** ASRock X470
-- **OS Drive:** Intel 240GB M.2 SSD
-- **Extra Drive:** WD Blue 1TB HDD
-- **PSU:** Corsair CX650M
 ## Programming Languages
 
 - C
@@ -48,3 +38,13 @@ In his free time, Michael enjoys cooking, playing his guitar, watching Netflix, 
 - Image & signal processing
 - Arduino & Raspberry Pi microcontrollers
 - High-performance computing
+
+## Current PC Rig
+
+- **CPU:** Ryzen 3600 6C/12T
+- **GPU:** EVGA GTX 1070
+- **RAM:** 16GB (2x8GB) @ 3000MHz
+- **Mobo:** ASRock X470
+- **OS Drive:** Intel 240GB M.2 SSD
+- **Extra Drive:** WD Blue 1TB HDD
+- **PSU:** Corsair CX650M

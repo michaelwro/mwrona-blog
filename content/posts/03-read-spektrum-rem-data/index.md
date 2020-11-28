@@ -3,7 +3,7 @@ title: "Read Serial Data From Spektrum Remote Receiver"
 date: "2020-09-07"
 author: Michael Wrona
 draft: false
-tags: ["arduino", "circuits", "c++", "drone", "programming"]
+tags: ["arduino", "circuits", "c++", "drone", "coding"]
 ---
 
 About six years ago, I purchased a [Spektrum DX6i](https://www.spektrumrc.com/Products/Default.aspx?ProdId=SPM6630) RC plane transmitter to fly my RC planes with. Unfortunately, life got busier and my interests shifted, which sent my planes and controller to retire in the basement. When the idea to build a quadcopter flight controller began to come to fruition, I knew my DX6i controller would be perfect! "This is a cause worth coming out of retirement for, old one" I said to my controller. His response: not powering on. I guess it's time for some fresh AA's.
