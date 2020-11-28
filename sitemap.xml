@@ -3,11 +3,6 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://mwrona.com/tags/arduino/</loc>
-    <lastmod>2020-11-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://mwrona.com/tags/control-theory/</loc>
     <lastmod>2020-11-27T00:00:00+00:00</lastmod>
   </url>
@@ -35,6 +30,11 @@
   <url>
     <loc>https://mwrona.com/tags/</loc>
     <lastmod>2020-11-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mwrona.com/tags/arduino/</loc>
+    <lastmod>2020-09-07T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -73,12 +73,12 @@
   </url>
   
   <url>
-    <loc>https://mwrona.com/tags/budget/</loc>
+    <loc>https://mwrona.com/tags/computers/</loc>
     <lastmod>2020-08-26T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://mwrona.com/tags/pc-builds/</loc>
+    <loc>https://mwrona.com/tags/tech-tips/</loc>
     <lastmod>2020-08-26T00:00:00+00:00</lastmod>
   </url>
   

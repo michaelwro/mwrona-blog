@@ -18,7 +18,7 @@
       <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://mwrona.com/posts/04-accel-roll-pitch/</guid>
-      <description>One of the most important components in control systems for airplanes, fighter jets, quadcopters, and rockets is the AHRS, or Attitude and Heading Reference System. As you can guess, the AHRS tells a system it&amp;rsquo;s current attitude orientation and heading. Attitude measurements are typically given as roll and pitch angles, and heading is relative to either magnetic or true north.</description>
+      <description>One of the most important components in control systems for airplanes, fighter jets, quadcopters, and rockets is the AHRS, or Attitude and Heading Reference System. As you can guess, the AHRS tells a system its current attitude orientation and heading. Attitude measurements are typically given as roll and pitch angles, and heading is relative to either magnetic or true north.</description>
     </item>
     
   </channel>

@@ -13,15 +13,6 @@
     
     
     <item>
-      <title>arduino</title>
-      <link>https://mwrona.com/tags/arduino/</link>
-      <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://mwrona.com/tags/arduino/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>control theory</title>
       <link>https://mwrona.com/tags/control-theory/</link>
       <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
@@ -36,6 +27,15 @@
       <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
       
       <guid>https://mwrona.com/tags/sensors/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>arduino</title>
+      <link>https://mwrona.com/tags/arduino/</link>
+      <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/tags/arduino/</guid>
       <description></description>
     </item>
     
@@ -76,20 +76,20 @@
     </item>
     
     <item>
-      <title>Budget</title>
-      <link>https://mwrona.com/tags/budget/</link>
+      <title>computers</title>
+      <link>https://mwrona.com/tags/computers/</link>
       <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/tags/budget/</guid>
+      <guid>https://mwrona.com/tags/computers/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>PC Builds</title>
-      <link>https://mwrona.com/tags/pc-builds/</link>
+      <title>tech tips</title>
+      <link>https://mwrona.com/tags/tech-tips/</link>
       <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/tags/pc-builds/</guid>
+      <guid>https://mwrona.com/tags/tech-tips/</guid>
       <description></description>
     </item>
     
