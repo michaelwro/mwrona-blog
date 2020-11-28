@@ -3,7 +3,7 @@ title: "The \'Big Dealz\' PC Build"
 date: "2020-08-26"
 author: Michael Wrona
 draft: false
-tags: ["PC Builds", "Budget"]
+tags: ["computers", "tech tips"]
 ---
 
 If you want to get the biggest bang for your buck when building a PC, you're going to have to buy secondhand parts - there's no denying it! Believe me, as someone whose net worth is defined primarily by electronics, you're going to want to squeeze as much value as possible out of your limited cash. Unfortunately, there seems to exist a bit of a stigma around buying used PC parts that prevents people from considering this option. I'm here to advocate against this stigma, and to tell you that it is simply not true!
