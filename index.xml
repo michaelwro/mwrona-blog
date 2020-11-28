@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © Michael Wrona 2020</copyright>
-    <lastBuildDate>Mon, 07 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 27 Nov 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://mwrona.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Roll and Pitch Angles From Accelerometer Sensors</title>
+      <link>https://mwrona.com/posts/04-accel-roll-pitch/</link>
+      <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/posts/04-accel-roll-pitch/</guid>
+      <description>One of the most important components in control systems for airplanes, fighter jets, quadcopters, and rockets is the AHRS, or Attitude and Heading Reference System. As you can guess, the AHRS tells a system it&amp;rsquo;s current attitude orientation and heading. Attitude measurements are typically given as roll and pitch angles, and heading is relative to either magnetic or true north.</description>
+    </item>
     
     <item>
       <title>Read Serial Data From Spektrum Remote Receiver</title>
