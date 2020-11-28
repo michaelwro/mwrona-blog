@@ -28,7 +28,7 @@ Where `$g = 9.81m/s^2$` and L refers to the level frame (no tilt, completely fla
 
 `$$\vec{a}_T = \begin{bmatrix} a_x & a_y & a_z \end{bmatrix}$$`
 
-Where T refers to the tilted frame and `$a_i$` refers to the accelerometer measurement for each axis. In order to describe the orientation of our tilted frame relative to the level one, we will be using Euler angles; more specifically, the 3-2-1 Euler angle set. I included a few resources at the bottom of the page if you need to brush up on them. The 3-2-1 Euler angles are referred to as yaw (`$\psi$`), pitch (`$\theta$`), and roll (`$\phi$`), respectfully, and are commonly used in aircraft dynamics and controls. We will use the 3-2-1 Euler angle direction cosine matrix, or DCM, to convert between the tilted frame and level frame. Since we are ignoring yaw/heading measurements, the DCM relationship between the tilted frame and level frame is:
+Where T refers to the tilted frame and `$a_i$` refers to the accelerometer measurement for each axis. In order to describe the orientation of our tilted frame relative to the level one, we will be using Euler angles; more specifically, the 3-2-1 Euler angle set. I included a few resources at the bottom of the page if you need to brush up on them. The 3-2-1 Euler angles are referred to as yaw (`$\psi$`), pitch (`$\theta$`), and roll (`$\phi$`), respectively, and are commonly used in aircraft dynamics and controls. We will use the 3-2-1 Euler angle direction cosine matrix, or DCM, to convert between the tilted frame and level frame. Since we are ignoring yaw/heading measurements, the DCM relationship between the tilted frame and level frame is:
 
 `$$\begin{pmatrix} a_x \\ a_y \\ a_z \end{pmatrix}_T = \begin{pmatrix} cos\phi & 0 & -sin\theta \\ sin\theta sin\phi & cos\phi & cos\theta sin\phi \\ sin\theta cos\phi & -sin\phi & cos\theta cos\phi \end{pmatrix} \begin{pmatrix} 0 \\ 0 \\ g \end{pmatrix}_L$$`
 
@@ -40,18 +40,18 @@ If we carry out the matrix-vector multiplications, we get the following equation
 
 Using the first equation to solve for `$\theta$`, we get:
 
-`$$Roll = \theta = arcsin \frac{a_x}{g}$$`
+`$$Pitch = \theta = arcsin \frac{a_x}{g}$$`
 
 Using the second and third equations to solve for `$\phi$`, and noting that `$tan = \frac{sin}{cos}$`, we get:
 
-`$$Pitch = \phi = arctan \frac{a_y}{a_z}$$`
+`$$Roll = \phi = arctan \frac{a_y}{a_z}$$`
 
 Using the fact that `$g = \sqrt{a_x^2 + a_y^2 + a_z^2}$` for a stationary sensor, we arrive at the two final expressions:
 
 ------------------------------------
 
-`$$Roll = \theta = arcsin \frac{a_x}{g} = arcsin \frac{a_x}{\sqrt{a_x^2 + a_y^2 + a_z^2}}$$`
-`$$Pitch = \phi = arctan \frac{a_y}{a_z}$$`
+`$$Pitch = \theta = arcsin \frac{a_x}{g} = arcsin \frac{a_x}{\sqrt{a_x^2 + a_y^2 + a_z^2}}$$`
+`$$Roll = \phi = arctan \frac{a_y}{a_z}$$`
 
 ------------------------------------
 
@@ -65,5 +65,3 @@ Using these two expressions, we can convert accelerometer measurements into roll
 - ["Understanding Euler Angles."](http://www.chrobotics.com/library/understanding-euler-angles) *CH Robotics* 2020. Web. Accessed 27 November 2020.
 - ["Spacecraft Dynamics & Control - 2.2.1 - Directional Cosine Matrices - Definitions."](https://www.youtube.com/watch?v=Zep-4pdVRyc) *YouTube*, uploaded by Bob Trenwith, 25 November 2018.
 - ["PlanetPhysics/Direction Cosine Matrix."](https://en.wikiversity.org/wiki/PlanetPhysics/Direction_Cosine_Matrix) *Wikiversity*, 13 September 2020. Web. Accessed 27 November 2020.
-
-"Euler Angles
