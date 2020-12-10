@@ -7,10 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © Michael Wrona 2020</copyright>
-    <lastBuildDate>Fri, 27 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 10 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://mwrona.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>coding</title>
+      <link>https://mwrona.com/tags/coding/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/tags/coding/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>numerical methods</title>
+      <link>https://mwrona.com/tags/numerical-methods/</link>
+      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/tags/numerical-methods/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>control theory</title>
@@ -54,15 +72,6 @@
       <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://mwrona.com/tags/circuits/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>coding</title>
-      <link>https://mwrona.com/tags/coding/</link>
-      <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://mwrona.com/tags/coding/</guid>
       <description></description>
     </item>
     

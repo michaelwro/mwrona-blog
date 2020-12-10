@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>coding on Michael Wrona&#39;s Blog</title>
-    <link>https://mwrona.com/tags/coding/</link>
-    <description>Recent content in coding on Michael Wrona&#39;s Blog</description>
+    <title>numerical methods on Michael Wrona&#39;s Blog</title>
+    <link>https://mwrona.com/tags/numerical-methods/</link>
+    <description>Recent content in numerical methods on Michael Wrona&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © Michael Wrona 2020</copyright>
     <lastBuildDate>Thu, 10 Dec 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://mwrona.com/tags/coding/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://mwrona.com/tags/numerical-methods/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -19,15 +19,6 @@
       
       <guid>https://mwrona.com/posts/05-bisection-method/</guid>
       <description>Introduction The first few algorithms introduced in numerical methods courses are typically root-finding algorithms. In my opinion, these algorithms are taught first because they are relatively easy to understand and code, and determining roots of a function is a very common math operation.</description>
-    </item>
-    
-    <item>
-      <title>Read Serial Data From Spektrum Remote Receiver</title>
-      <link>https://mwrona.com/posts/03-read-spektrum-rem-data/</link>
-      <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://mwrona.com/posts/03-read-spektrum-rem-data/</guid>
-      <description>About six years ago, I purchased a Spektrum DX6i RC plane transmitter to fly my RC planes with. Unfortunately, life got busier and my interests shifted, which sent my planes and controller to retire in the basement. When the idea to build a quadcopter flight controller began to come to fruition, I knew my DX6i controller would be perfect!</description>
     </item>
     
   </channel>
