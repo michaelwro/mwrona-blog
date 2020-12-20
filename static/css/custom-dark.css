@@ -42,8 +42,9 @@ a:hover {
 }
 
 code.has-jax {
-	font: inherit;
+	font: "Gyre-Pagella";
 	font-size: 100%;
+	-webkit-font-smoothing: antialiased;
 	background: inherit !important;
 	border: inherit;
 	color: #dddddd;
