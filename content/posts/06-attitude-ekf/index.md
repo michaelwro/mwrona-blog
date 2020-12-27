@@ -69,9 +69,45 @@ Where `$\psi_{true}$` is true heading, `$\psi_{mag}$` is magnetic heading, and `
 
 # EKF Development
 
-EKFs 
+All Kalman filters have two main steps - a prediction step and an update step. For our EKF prediction step, gyroscope measurements will be recorded at a high sample rate and used to estimate/predict state variables between acceleromter and magnetometer updates. The EKF update step will use lower-rate accelerometer and magnetometer measurements to correct and update state variables. State variables, EKF equations, transition equations, and measurement models will be discussed in the next sections.
 
+## State Variables
 
+As previously mentioned, we are interested in designing an EKF to estimate quaternion orientation and gyro biases from accelerometer, gyroscope, and magnetometer measurements. The state variables we will estimate with our EKF will be the four quaternion parameters and three gyro biases, for a total of seven state variables. The state vector is given in equation `$\eqref{eq:state-vec}$`.
 
+`$$\begin{equation} \vec{x} = \begin{bmatrix} q_0 & q_1 & q_2 & q_3 & b_x & b_y & b_z \end{bmatrix} \label{eq:state-vec} \end{equation}$$`
 
+## Prediction Step & Transition Equations
+
+The prediction step of our EKF will use gyro measurements to estimate and 'propogate' state variables between accelerometer and magnetometer measurements. The quaternion differential equation given in equation `$\eqref{eq:quat-kin}$` and the gyro measurment model in equation `$\eqref{eq:gyro-model}$` will be time integrated and propogated to estimate state variables. The prediction step in EKFs are given in equations _____ through ________. More information about the [Kalman Filters](https://en.wikipedia.org/wiki/Kalman_filter) and [EKF](https://en.wikipedia.org/wiki/Extended_Kalman_filter) equations can be readily found online. 
+
+`$$\begin{equation} \hat{x}_k^{-} = f(\hat{x}_{k-1}) \label{eq:ekf-pred1} \end{equation}$$`
+`$$\begin{equation} P_k^{-} = F_k P_{k-1} F_k^T + Q \label{eq:ekf-pred2} \end{equation}$$`
+`$$\begin{equation} F_k = \frac{\partial f(\hat{x}_k^{-})}{\partial \hat{x}_k^{-}} \label{eq:ekf-pred3} \end{equation}$$`
+
+`$\hat{x}_{k-1}$` is the previous state vector and `$ \hat{x}_k^{-}$` is the new estimated state vector. The new state vector is computed by time-integrating equations that describe the time rate of change of the state variables, such as the quaternion kinematic differential equation. These equations are called the state transition equations and are represented as `$f(\hat{x}_{k})$`. `$P_k^{-}$` is called the state covariance matrix. `$F_k$` is the Jacobian matrix of the state transition equations, each differentiated with respect to the state variables. Finally, `$Q_k$` is called the process noise coviariance matrix and, practically speaking, represents uncertainty in process dynamics. The process covariance matrix is one of two matrices used to tune the performance of EKFs. Typically, `$Q$` is chosen to be a diagonal matrix whose elements can be modified to tune EKF performance. Selecting and tuning the `$Q$` matrix is beyond the scope of this article.
+
+An Euler integration scheme will be used to time-integrate the state transition equations. Since the quaternion differential equations and gyro bias model are both first-order equations in time, and Euler integration is a first-order method, Euler integration will be stable, given a small enough timestep. Other higher-order methods such as Runge-Kutta methods could be used, but are more computationally complex and more difficult to implement. 
+
+### State Transition Equations
+
+The quaternion differential equation in equation `$\eqref{eq:quat-kin}$`, the gyro bias model in equation `$\eqref{eq:gyro-model}$`, and Euler integration will be used to derive the transition equations. The transition equation is given below in equation `$\eqref{eq:trans-eqn}$` in matrix form (for convenience of notation), with Euler integration.
+
+`$$\begin{equation} \begin{pmatrix} q_0 \\ q_1 \\ q_2 \\ q_3 \\ b_x \\ b_y \\ b_z \end{pmatrix}_k  =  \begin{pmatrix} q_0 \\ q_1 \\ q_2 \\ q_3 \\ b_x \\ b_y \\ b_z \end{pmatrix}_{k-1}  +  \frac{\Delta t}{2} \begin{pmatrix} 0 & -(p - b_x) & -(q - b_y) & -(r - b_z) & 0 & 0 & 0 \\ (p - b_x) & 0 & (r - b_z) & -(q - b_y) & 0 & 0 & 0 \\ (q - b_y) & -(r - b_z) & 0 & (p - b_x) & 0 & 0 & 0 \\ (r - b_z) & (q - b_y) & -(p - b_x) & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 & 0 & 0 \end{pmatrix}_{k-1}  \begin{pmatrix} q_0 \\ q_1 \\ q_2 \\ q_3 \\ b_x \\ b_y \\ b_z \end{pmatrix}_{k-1} \label{eq:trans-eqn} \end{equation} $$`
+
+`$p$`, `$q$`, and `$r$` are the three x, y, and z raw gyroscope measurements, respectively. The `$k-1$` subscript represents previous values, and the `$k$` subscript represents the new values.
+
+### Jacobian Matrix Equations
+
+The Jacobian matrix `$F$` is computed from the differential equations given below in `$\eqref{eq:jacobian-eqs}$`, differentiated with respect to the state variables. The equations are formed from the quaternion differential equation in equation `$\eqref{eq:quat-kin}$` and the gyro model in equation `$\eqref{eq:gyro-model}$`. The partial derivatives in the Jacobian matrix will be simple and be determined analytically.
+
+`$$ \dot{q}_0 = -\frac{1}{2} \left( (p - b_x)q_1 + (q - b_y)q_2 + (r - b_z)q_3 \right) $$`
+`$$ \dot{q}_1 = \frac{1}{2} \left( (p - b_x)q_0 - (q - b_y)q_3 + (r - b_z)q_2 \right) $$`
+`$$ \begin{equation} \dot{q}_2 = \frac{1}{2} \left( (p - b_x)q_3 + (q - b_y)q_0  (r - b_z)q_1 \right) \label{eq:jacobian-eqs} \end{equation} $$`
+`$$ \dot{q}_3 = \frac{1}{2} \left( -(p - b_x)q_2 + (q - b_y)q_1 + (r - b_z)q_0 \right) $$`
+`$$ \dot{b}_x = 0 $$`
+`$$ \dot{b}_y = 0 $$`
+`$$ \dot{b}_z = 0 $$`
+
+## Update Step & 
 
