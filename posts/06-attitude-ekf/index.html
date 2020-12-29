@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Designing a Quaternion-Based EKF for Accelerometer, Gyroscope, &amp; Magnetometer Fusion - Michael Wrona&#39;s Blog</title><link rel="icon" type="image/png" href=/favicon.png /><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="Designing a Quaternion-Based EKF for Accelerometer, Gyroscope, &amp; Magnetometer Fusion" />
+<meta property="og:description" content="One of the most important parts of any aerospace control system are the sensor fusion and state estimation algorithms. This software system is responsible for recording sensor observations and &lsquo;fusing&rsquo; measurements to estimate parameters such as orientation, position, and speed. The quality of sensor fusion algorithms will directly influence how well your control system will perform." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://mwrona.com/posts/06-attitude-ekf/" />
+<meta property="article:published_time" content="2020-12-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-12-20T00:00:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Designing a Quaternion-Based EKF for Accelerometer, Gyroscope, &amp; Magnetometer Fusion"/>
+<meta name="twitter:description" content="One of the most important parts of any aerospace control system are the sensor fusion and state estimation algorithms. This software system is responsible for recording sensor observations and &lsquo;fusing&rsquo; measurements to estimate parameters such as orientation, position, and speed. The quality of sensor fusion algorithms will directly influence how well your control system will perform."/>
+<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,300italic,400italic|Raleway:200,300" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mwrona.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mwrona.com/css/main.css" /><link rel="stylesheet" type="text/css" href="https://mwrona.com/css/dark.css"  />
+	<link rel="stylesheet" type="text/css" href="https://mwrona.com/css/custom-dark.css"  />
+
+	<script src="https://mwrona.com/js/feather.min.js"></script>
+	
+	<script src="https://mwrona.com/js/main.js"></script>
+
+	<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        tags: 'ams'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+	<div class="container wrapper post">
+		<div class="header">
+	<h1 class="site-title"><a href="https://mwrona.com/">Michael Wrona&#39;s Blog</a></h1>
+	<div class="site-description"><h2>Engineering, coding, tech, and other cool projects!</h2><nav class="nav social">
+			<ul class="flat"><a href="https://github.com/michaelwro" title="Github"><i data-feather="github"></i></a></ul>
+		</nav>
+	</div>
+
+	<nav class="nav">
+		<ul class="flat">
+			
+			<li>
+				<a href="/">Home</a>
+			</li>
+			
+			<li>
+				<a href="/posts">All Posts</a>
+			</li>
+			
+			<li>
+				<a href="/tags">Post Tags</a>
+			</li>
+			
+			<li>
+				<a href="/about">About</a>
+			</li>
+			
+		</ul>
+	</nav>
+</div>
+
+
+		<div class="post-header">
+			<h1 class="title">Designing a Quaternion-Based EKF for Accelerometer, Gyroscope, &amp; Magnetometer Fusion</h1>
+			<div class="meta">Posted at &mdash; Dec 20, 2020</div>
+		</div>
+
+		<div class="markdown">
+			<p>One of the most important parts of any aerospace control system are the sensor fusion and state estimation algorithms. This software system is responsible for recording sensor observations and &lsquo;fusing&rsquo; measurements to estimate parameters such as orientation, position, and speed. The quality of sensor fusion algorithms will directly influence how well your control system will perform. Poor, low-grade sensor fusion software will result in poor controller performance. Therefore, especially for costly aerospace systems, designing robust, efficient, and high-performance sensor fusion software is extremely important to ensuring mission success. One of the most popular sensor fusion algorithms is the Extended Kalman Filter (EKF). Unlike the linear Kalman Filter, EKFs are nonlinear and can therefore more accurately account for nonlinearities in sensor measurements and system dynamics. One popular sensor fusion application is fusing inertial measurement unit (IMU) measurements to estimate roll, pitch, and yaw/heading angles. This article will describe how to design an Extended Kalman Filter (EFK) to estimate NED quaternion orientation and gyro biases from 9-DOF (degree of freedom) IMU accelerometer, gyroscope, and magnetomoeter measurements.</p>
+<h1 id="background">Background</h1>
+<h2 id="coordinate-system">Coordinate System</h2>
+<p>Orientation needs to be defined relative to something. We will be resolving orientation relative to the <a href="https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates">NED (North, East, Down) reference frame</a>. In the NED frame, the positive X-axis points towards true north, the positive Z-axis is parallel to gravitational acceleration downwards, and the Y-axis completes the right-handed triad.</p>
+<h2 id="quaternions">Quaternions</h2>
+<p>We will be using quaternions to describe our IMU&rsquo;s orientation. Quaternions (denoted as <code>$q$</code>) are a four-parameter set used to describe orientation. Compared to <a href="https://en.wikipedia.org/wiki/Euler_angles">Euler angles</a>, quaternions do not suffer from gimbal lock and are more numerically stable and computationally efficient. Quaternion orientation is described as a rotation angle <code>$\theta$</code> about an Euler axis <code>$\vec{e}$</code>.</p>
+<p><code>$$\begin{equation} \vec{q} = \begin{bmatrix} q_0 \\ q_1 \\ q_2 \\ q_3 \end{bmatrix} = \begin{bmatrix} cos\theta \\ e_1 sin(\theta/2) \\ e_2 sin(\theta/2) \\ e_3 sin(\theta/2) \end{bmatrix} \end{equation}$$</code></p>
+<p>The quaternion kinematic differential equation is given in equation <code>$\eqref{eq:quat-kin}$</code> in matrix form, and relates body angular velocities to quaternions:</p>
+<p><code>$$ \begin{equation} \begin{bmatrix} \dot{q_0} \\ \dot{q_1} \\ \dot{q_2} \\ \dot{q_3} \end{bmatrix} = \frac{1}{2} \begin {bmatrix} -q_1 &amp; -q_2 &amp; -q_3 \\ q_0 &amp; -q_3 &amp; q_2 \\ q_3 &amp; q_0 &amp; -q_1 \\ -q_2 &amp; q_1 &amp; q_0 \end{bmatrix}  \begin{bmatrix} \omega_1 \\ \omega_2 \\ \omega_3 \end{bmatrix} \label{eq:quat-kin} \end{equation}$$</code></p>
+<h3 id="euler-angles-and-quaternions">Euler Angles and Quaternions</h3>
+<p>Euler angles are a three-parameter set used to describe orientation. In particular, we will be using the &lsquo;3-2-1&rsquo; Euler angles, commonly referred to as roll (<code>$\phi$</code>), pitch (<code>$\theta$</code>), and yaw (or heading) (<code>$\psi$</code>), respectively. Euler angles are intuitive and easy to visualize, but suffer from <a href="https://en.wikipedia.org/wiki/Gimbal_lock">gimbal lock</a> when pitch angle <code>$\theta$</code> is 90 degrees, and have a trigonometric kinematic relationship, which is more computationally complex. We can use equations <code>$\eqref{eq:quat2roll}$</code> through <code>$\eqref{eq:quat2yaw}$</code> to convert from quaternions to Euler angles.</p>
+<p><code>$$\begin{equation} \phi = atan2 \left( 2(q_2 q_3 + q_0 q_1), \quad q_0^2 - q_1^2 - q_2^2 + q_3^2 \right) \label{eq:quat2roll} \end{equation}$$</code>
+<code>$$\begin{equation} \theta = -asin \left( 2(q_1 q_3 - q_0 q_2) \right) \label{eq:quat2pitch} \end{equation}$$</code>
+<code>$$\begin{equation} \psi = atan2 \left( 2(q_1 q_2 + q_0 q_3), \quad q_0^2 + q_1^2 - q_2^2 - q_3^2 \right) \label{eq:quat2yaw} \end{equation}$$</code></p>
+<h2 id="gyroscope-measurement-model">Gyroscope Measurement Model</h2>
+<p>Gyroscopes measure body angular rotation rates in degrees per second [deg/s]. Ideally, gyro measurements could be time-integrated to compute body angles in degrees. Unfortunately, this direct integration is not possible due to gyro offset and gyro drift. If raw gyro measurements were taken while stationary, the readings would be close to zero, but non-zero. This offset from zero while stationary is called gyro offset or gyro bias. If these raw gyro measurements were time-integrated, the computed angles would slowly increase over time, despite the gyro being stationary. This angle &lsquo;drift&rsquo; is called gyro drift. Therefore, gyro measurement offset causes gyro drift in time-integrated gyro measurements. An illustration of gyro drift can be seen below.</p>
+
+<figure class="center" >
+  <a href="/post-imgs/06-attitude-ekf/gyro-bias.png" target="_blank">
+    <img src="/post-imgs/06-attitude-ekf/gyro-bias.png"  alt="Illustration of gyro bias"   width="400px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >Illustration of gyro bias (b).</figcaption>
+  
+</figure>
+
+
+<figure class="center" >
+  <a href="/post-imgs/06-attitude-ekf/gyro-drift.png" target="_blank">
+    <img src="/post-imgs/06-attitude-ekf/gyro-drift.png"  alt="Illustration of gyro drift"   width="400px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >Illustration of integrated gyro angle drift over time.</figcaption>
+  
+</figure>
+
+<p>Gyro bias can be determined experimentally and hard-coded into software. This is the simplest approach and may suffice for recreational applications. However, it is very advantageous and relatively simple to estimate gyro bias with an EKF. In order to estimate gyro bias, a measurement model must be developed. It is assumed that gyro bias is time-invariant, or constant with time, in this derivation. In reality, the gyro bias varies with time and temperature, but the change is typically small, making constant bias a reasonable simplification. Equation <code>$\eqref{eq:gyro-model}$</code> is the simplified sensor model used in this derivation.</p>
+<p><code>$$\begin{equation} \vec{\omega}_{corr} = \vec{\omega}_{meas} - \vec{b} \quad , \quad \dot{b} = 0 \label{eq:gyro-model} \end{equation}$$</code></p>
+<p>Where <code>$\vec{\omega}_{corr}$</code> are the corrected gyro measurements (three measurements), <code>$\vec{\omega}_{meas}$</code> are the measured gyro readings, and <code>$\vec{b}$</code> are the gyro biases to be estimated.</p>
+<h2 id="roll-and-pitch-from-accelerometer-measurements">Roll and Pitch From Accelerometer Measurements</h2>
+<p>One important operation performed in our EKF will be computing roll and pitch angles from accelerometer measurements. Since we assume gravitational acceleration is straight down in our coordinate system, we can compute roll and pitch angles relative to the gravity vector. <a href="/posts/04-accel-roll-pitch/">A detailed derivation of this method can be found here</a>. We will assume the positive Z-axis is parallel to gravitational acceleration downwards, and the XY plane is perpendicular to gravity. Since gravity is independent of heading angle, yaw angle cannot be determined from accelerometer measurements. To put it simply, we cannot measure heading with an accelerometer and gyro because gravity does not depend on heading. The equations to compute roll and pitch from accelerometer measurements are given in equations <code>$\eqref{eq:accel2roll}$</code> and <code>$\eqref{eq:accel2pitch}$</code>.</p>
+<p><code>$$\begin{equation} Roll = \phi = arctan \frac{a_y}{a_z} \label{eq:accel2roll} \end{equation}$$</code>
+<code>$$\begin{equation} Pitch = \theta = arcsin \frac{a_x}{g} = arcsin \frac{a_x}{\sqrt{a_x^2 + a_y^2 + a_z^2}} \label{eq:accel2pitch} \end{equation}$$</code></p>
+<p>Where <code>$a_x, a_y$</code> and <code>$a_z$</code> are the accelerometer measurements. It is important to note that these equations are valid only when the accelerometer is stationary and not influenced by accelerations other than gravitational. These equations should still work for most applications, accept dynamic ones.</p>
+
+<figure class="center" >
+  <a href="/post-imgs/04-accel-roll-pitch/coord-sys.png" target="_blank">
+    <img src="/post-imgs/04-accel-roll-pitch/coord-sys.png"  alt="Coordinate System"   width="300px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >Visualization of roll and pitch angles w.r.t the NED frame.</figcaption>
+  
+</figure>
+
+<h2 id="tilt-compensated-compass">Tilt-Compensated Compass</h2>
+<p>Three-axis magnetometers are essentially three-dimensional compasses. They measure the local magnetic field vector, including earth&rsquo;s magnetic field. External paramagnetic and electromagnetic sources can cause <a href="https://www.vectornav.com/resources/magnetometer-errors-calibration">hard and soft-iron distortions</a> to magnetometer measurements. These distortions can be accounted for through calibration. We will assume that the magnetometer measurements are already calibrated for hard and soft-iron distortions.</p>
+<p>Also, the NED coordinate frame is relative to <a href="https://gisgeography.com/magnetic-north-vs-geographic-true-pole/">true north</a>. Our magnetometer measures earth&rsquo;s magnetic field and therefore compass heading relative to magnetic north. The difference in heading between true north and magnetic north is called <a href="https://www.ngdc.noaa.gov/geomag/declination.shtml">magnetic declination</a>, often denoted as <code>$\delta$</code>. Magnetic declination is dependent on latitude, longitude, and altitude. Declination, field strength, and other parameters can be determined via an earth magnetic field model, such as the <a href="https://www.ngdc.noaa.gov/geomag/WMM/limit.shtml">World Magnetic Model 2020 (WMM2020)</a>.</p>
+<p>In order to compute true heading from magnetometer measurements and correct for sensor tilt, we will create a &lsquo;tilt-compensated compass&rsquo; using equation <code>$\eqref{eq:tilt-compass}$</code>.</p>
+<p><code>$$\psi_{true} = \psi_{mag} + \delta $$</code></p>
+<p><code>$$\begin{equation} \psi_{true} = atan2 \begin{pmatrix} -m_y cos\phi + m_z sin \phi \\ m_x cos\theta + m_y sin\phi sin\theta + m_z cos\phi sin\theta \end{pmatrix} + \delta \label{eq:tilt-compass} \end{equation}$$</code></p>
+<p>Where <code>$\psi_{true}$</code> is true heading, <code>$\psi_{mag}$</code> is magnetic heading, and <code>$m_x$</code>, <code>$m_y$</code>, and <code>$m_z$</code> are (calibrated) magnetometer measurements. Roll and pitch can be determined from accelerometer measurements and used in equation <code>$\eqref{eq:tilt-compass}$</code>.</p>
+<h1 id="ekf-development">EKF Development</h1>
+<p>All Kalman filters have two main steps - a prediction step and an update step. For our EKF prediction step, gyroscope measurements will be recorded at a high sample rate and used to estimate/predict state variables between accelerometer and magnetometer updates. The EKF update step will use lower-rate accelerometer and magnetometer measurements to correct and update state variables. State variables, EKF equations, transition equations, and measurement models will be discussed in the next sections.</p>
+<h2 id="state-variables">State Variables</h2>
+<p>As previously mentioned, we are interested in designing an EKF to estimate quaternion orientation and gyro biases from accelerometer, gyroscope, and magnetometer measurements. The state variables we will estimate with our EKF will be the four quaternion parameters and three gyro biases, for a total of seven state variables. The state vector is given in equation <code>$\eqref{eq:state-vec}$</code>.</p>
+<p><code>$$\begin{equation} \vec{x} = \begin{bmatrix} q_0 &amp; q_1 &amp; q_2 &amp; q_3 &amp; b_x &amp; b_y &amp; b_z \end{bmatrix} \label{eq:state-vec} \end{equation}$$</code></p>
+<h2 id="prediction-step--transition-equations">Prediction Step &amp; Transition Equations</h2>
+<p>The prediction step of our EKF will use gyro measurements to estimate and &lsquo;propagate&rsquo; state variables between accelerometer and magnetometer measurements. The quaternion differential equation given in equation <code>$\eqref{eq:quat-kin}$</code> and the gyro measurement model in equation <code>$\eqref{eq:gyro-model}$</code> will be time integrated and propagated to estimate state variables. The prediction step in EKFs are given in equations <code>$\eqref{eq:ekf-pred1}$</code> through <code>$\eqref{eq:ekf-pred3}$</code>. More information about the <a href="https://en.wikipedia.org/wiki/Kalman_filter">Kalman Filter</a> and <a href="https://en.wikipedia.org/wiki/Extended_Kalman_filter">EKF</a> equations can be readily found online.</p>
+<p><code>$$\begin{equation} \hat{x}_k^{-} = f(\hat{x}_{k-1}) \label{eq:ekf-pred1} \end{equation}$$</code>
+<code>$$\begin{equation} P_k^{-} = F_k P_{k-1} F_k^T + Q \label{eq:ekf-pred2} \end{equation}$$</code>
+<code>$$\begin{equation} F_k = \frac{\partial f(\hat{x}_k^{-})}{\partial \hat{x}_k^{-}} \label{eq:ekf-pred3} \end{equation}$$</code></p>
+<p><code>$\hat{x}_{k-1}$</code> is the previous state vector and <code>$ \hat{x}_k^{-}$</code> is the new estimated state vector. The new state vector is computed by time-integrating equations that describe the time rate of change of the state variables, such as the quaternion kinematic differential equation. These equations are called the state transition equations and are represented as <code>$f(\hat{x}_{k})$</code>. <code>$P_k^{-}$</code> is called the state covariance matrix. <code>$F_k$</code> is the Jacobian matrix of the state transition equations, each differentiated with respect to the state variables. Finally, <code>$Q_k$</code> is called the process noise covariance matrix and, practically speaking, represents uncertainty in process dynamics. The process covariance matrix is one of two matrices used to tune the performance of EKFs. Typically, <code>$Q$</code> is chosen to be a diagonal matrix whose elements can be modified to tune EKF performance. Selecting and tuning the <code>$Q$</code> matrix is beyond the scope of this article.</p>
+<p>An Euler integration scheme will be used to time-integrate the state transition equations. Since the quaternion differential equations and gyro bias model are both first-order equations in time, and Euler integration is a first-order method, Euler integration will be stable given a small enough timestep. Other higher-order methods such as Runge-Kutta methods could be used, but are more computationally complex and more difficult to implement.</p>
+<h3 id="state-transition-equations">State Transition Equations</h3>
+<p>The quaternion differential equation in equation <code>$\eqref{eq:quat-kin}$</code>, the gyro bias model in equation <code>$\eqref{eq:gyro-model}$</code>, and Euler integration will be used to derive the transition equations. The transition equation is given below in equation <code>$\eqref{eq:trans-eqn}$</code> in matrix form (for convenience of notation), with Euler integration applied.</p>
+<p><code>$$\begin{equation} \begin{pmatrix} q_0 \\ q_1 \\ q_2 \\ q_3 \\ b_x \\ b_y \\ b_z \end{pmatrix}_k  =  \begin{pmatrix} q_0 \\ q_1 \\ q_2 \\ q_3 \\ b_x \\ b_y \\ b_z \end{pmatrix}_{k-1}  +  \frac{\Delta t}{2} \begin{pmatrix} 0 &amp; -(p - b_x) &amp; -(q - b_y) &amp; -(r - b_z) &amp; 0 &amp; 0 &amp; 0 \\ (p - b_x) &amp; 0 &amp; (r - b_z) &amp; -(q - b_y) &amp; 0 &amp; 0 &amp; 0 \\ (q - b_y) &amp; -(r - b_z) &amp; 0 &amp; (p - b_x) &amp; 0 &amp; 0 &amp; 0 \\ (r - b_z) &amp; (q - b_y) &amp; -(p - b_x) &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \end{pmatrix}_{k-1}  \begin{pmatrix} q_0 \\ q_1 \\ q_2 \\ q_3 \\ b_x \\ b_y \\ b_z \end{pmatrix}_{k-1} \label{eq:trans-eqn} \end{equation} $$</code></p>
+<p><code>$p$</code>, <code>$q$</code>, and <code>$r$</code> are the three x, y, and z raw gyroscope measurements, respectively. The <code>$k-1$</code> subscript represents previous values, and the <code>$k$</code> subscript represents the new values.</p>
+<h3 id="jacobian-matrix-equations">Jacobian Matrix Equations</h3>
+<p>The Jacobian matrix <code>$F$</code> is computed from the differential equations given below in <code>$\eqref{eq:jacobian-eqs}$</code>, differentiated with respect to the state variables. The equations are formed from the quaternion differential equation in equation <code>$\eqref{eq:quat-kin}$</code> and the gyro model in equation <code>$\eqref{eq:gyro-model}$</code>. The partial derivatives in the Jacobian matrix will be simple and can be determined analytically.</p>
+<p><code>$$ \dot{q}_0 = -\frac{1}{2} \left( (p - b_x)q_1 + (q - b_y)q_2 + (r - b_z)q_3 \right) $$</code>
+<code>$$ \dot{q}_1 = \frac{1}{2} \left( (p - b_x)q_0 - (q - b_y)q_3 + (r - b_z)q_2 \right) $$</code>
+<code>$$ \begin{equation} \dot{q}_2 = \frac{1}{2} \left( (p - b_x)q_3 + (q - b_y)q_0  (r - b_z)q_1 \right) \label{eq:jacobian-eqs} \end{equation} $$</code>
+<code>$$ \dot{q}_3 = \frac{1}{2} \left( -(p - b_x)q_2 + (q - b_y)q_1 + (r - b_z)q_0 \right) $$</code>
+<code>$$ \dot{b}_x = 0 $$</code>
+<code>$$ \dot{b}_y = 0 $$</code>
+<code>$$ \dot{b}_z = 0 $$</code></p>
+<h2 id="update-step--measurement-equations">Update Step &amp; Measurement Equations</h2>
+<p>The update step in our EKF will use accelerometer and magnetometer measurements to update, or &lsquo;correct,&rsquo; state variables predicted from gyro measurements. The update step computes the difference between sensor observations and estimated sensor values. The estimated sensor values are a function of state variables, effectively &lsquo;converting&rsquo; state variables to accelerometer/magnetometer measurements. This is referred to as an &lsquo;observation model.&rsquo; Then the Kalman gain will be computed. Finally, the state variables and covariance matrix will be updated. The update step in EKFs are given in equations <code>$\eqref{eq:ekf-update1}$</code> through <code>$\eqref{eq:ekf-update4}$</code>.</p>
+<p><code>$$\begin{equation} \tilde{y}_k = z_k - h(\hat{x}_k) \label{eq:ekf-update1} \end{equation} $$</code>
+<code>$$\begin{equation} K_k = P_k H_k^T (H_k P_k H_k^T + R_k)^{-1} \label{eq:ekf-update2} \end{equation} $$</code>
+<code>$$\begin{equation} \hat{x}_{k+1} = \hat{x}_k + K_k \tilde{y}_k \label{eq:ekf-update3} \end{equation} $$</code>
+<code>$$\begin{equation} P_{k+1} = (I - K_k H_k) P_k \label{eq:ekf-update4} \end{equation} $$</code></p>
+<p><code>$\tilde{y}_k$</code> is the innovation or residual, <code>$z_k$</code> is the measurement vector containing roll, pitch, and heading measurements from the accelerometer and magnetometer, <code>$h(\hat{x}_k)$</code> is the observation model, <code>$K_k$</code> is the Kalman gain, and <code>$H_k$</code> is the Jacobian of <code>$h(\hat{x}_k)$</code>. <code>$R_k$</code> is the measurement covariance matrix and represents measurement error. <code>$R_k$</code> is typically a diagonal matrix whose elements are the sensor noise variances for each measurement. The values in <code>$R_k$</code> can be modified to tune the EKF, but are typically kept as the sensor noise variances.</p>
+<h3 id="observation-model--jacobian">Observation Model &amp; Jacobian</h3>
+<p>The observation model is used to estimate sensor observations from state variables. The accelerometer will compute roll and pitch angles, and the magnetometer will compute true heading. Therefore, the observation model will compute roll, pitch, and heading angles from state variables (quaternion and gyro biases). Equations <code>$\eqref{eq:accel2roll}$</code> and <code>$\eqref{eq:accel2pitch}$</code> compute roll and pitch from accelerometer masurements, and equation <code>$\eqref{eq:tilt-compass}$</code> computes true heading from magnetometer measurements. In order to compute roll, pitch, and heading from state variables, we will use equations <code>$\eqref{eq:quat2roll}$</code>, <code>$\eqref{eq:quat2pitch}$</code>, and <code>$\eqref{eq:quat2yaw}$</code>, which are functions of the quaternion. The observation model Jacobian <code>$H_k$</code> will be computed from equations <code>$\eqref{eq:quat2roll}$</code>, <code>$\eqref{eq:quat2pitch}$</code>, and <code>$\eqref{eq:quat2yaw}$</code>, and can be computed analytically. The partial derivatives are long expressions, and are left to the reader to compute.</p>
+<h3 id="heading"></h3>
+
+		</div>
+
+		<div class="post-tags">
+			
+				
+					<nav class="nav tags">
+							<ul class="flat">
+								
+								<li><a href="/tags/control-theory">control theory</a></li>
+								
+								<li><a href="/tags/sensors">sensors</a></li>
+								
+							</ul>
+					</nav>
+				
+			
+		</div>
+		</div>
+	<div class="footer wrapper">
+	<nav class="nav">
+		<div> Copyright © Michael Wrona 2020 |  Powered by <a href="https://gohugo.io">Hugo</a> and the <a href="https://github.com/vividvilla/ezhil">Ezhil theme</a></div>
+	</nav>
+</div>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-176773333-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script>feather.replace()</script>
+</body>
+</html>

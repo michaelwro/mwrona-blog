@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © Michael Wrona 2020</copyright>
-    <lastBuildDate>Fri, 27 Nov 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 20 Dec 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://mwrona.com/tags/sensors/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Designing a Quaternion-Based EKF for Accelerometer, Gyroscope, &amp; Magnetometer Fusion</title>
+      <link>https://mwrona.com/posts/06-attitude-ekf/</link>
+      <pubDate>Sun, 20 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/posts/06-attitude-ekf/</guid>
+      <description>One of the most important parts of any aerospace control system are the sensor fusion and state estimation algorithms. This software system is responsible for recording sensor observations and &amp;lsquo;fusing&amp;rsquo; measurements to estimate parameters such as orientation, position, and speed. The quality of sensor fusion algorithms will directly influence how well your control system will perform.</description>
+    </item>
     
     <item>
       <title>Roll and Pitch Angles From Accelerometer Sensors</title>
