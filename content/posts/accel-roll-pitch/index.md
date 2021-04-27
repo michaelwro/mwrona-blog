@@ -17,7 +17,7 @@ An AHRS consists of three different sensors: a three-axis accelerometer, a three
 
 ## Derivation
 
-{{< figure src="/post-imgs/04-accel-roll-pitch/coord-sys.png" alt="Coordinate System" width="300px" position="center" style="border-radius: 8px;" caption="Visualization of angles, where (X, Y, Z) is the level frame, and (X', Y', Z') is the tilted frame." captionPosition="center">}}
+{{< figure src="/post-imgs/accel-roll-pitch/coord-sys.png" alt="Coordinate System" width="300px" position="center" style="border-radius: 8px;" caption="Visualization of angles, where (X, Y, Z) is the level frame, and (X', Y', Z') is the tilted frame." captionPosition="center">}}
 
 If we express the gravitational acceleration vector in a level frame, with the +z-axis in the same direction as gravity, it would be:
 

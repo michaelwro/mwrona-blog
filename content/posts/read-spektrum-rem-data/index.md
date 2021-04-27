@@ -14,7 +14,7 @@ I was initially going to use my [Spektrum AR6210 6-channel receiver](https://www
 
 I had always wondered what the little dongle-thingy was attached to my AR6210 receiver. I did some research and discovered this was a [Spektrum DSMX Remote Receiver](https://www.spektrumrc.com/Products/Default.aspx?ProdID=SPM9645). I did some more digging and found out that the three wires connecting the remote receiver to the AR6210 were power (+3.3V, orange), data (gray), and ground (black) wires. It turns out that the connection between the two was a serial connection that contained channel data! After this amazing discovery, I began reverse engineering the DSMX communication protocol and eventually succeeded: I figured out how to extract the six channel/transmitter stick positions from the DSMX serial byte stream. Now, time to tell you how to do the same!
 
-{{< figure src="/post-imgs/03-read-spektrum-sat-data/rem-rec-and-rc-rec.jpg" alt="Remote Receiver and RC Receiver"
+{{< figure src="/post-imgs/read-spektrum-sat-data/rem-rec-and-rc-rec.jpg" alt="Remote Receiver and RC Receiver"
 width="400px" position="center" style="border-radius: 8px;"
 caption="Spektrum Remote Receiver and AR6210 RC Receiver." captionPosition="center">}}
 
@@ -89,11 +89,11 @@ This will begin to make more sense when I describe my data processing code down 
 
 In order to make the remote receiver breadboard-compatible, I needed to make my own custom adapter. I bought an additional [remote receiver cable](https://www.amazon.com/gp/product/B000ND6IXW/ref=ppx_yo_dt_b_asin_title_o07_s00?ie=UTF8&psc=1) and soldered its wires to the wires of a standard servo connector (see image below).
 
-{{< figure src="/post-imgs/03-read-spektrum-sat-data/rec-wire-conv.jpg" alt="Custom wire adaptor."
+{{< figure src="/post-imgs/read-spektrum-sat-data/rec-wire-conv.jpg" alt="Custom wire adaptor."
 width="400px" position="center" style="border-radius: 8px;"
 caption="Custom adapter to convert the remote receiver connector to a standard servo plug." captionPosition="center">}}
 
-{{< figure src="/post-imgs/03-read-spektrum-sat-data/wiring.jpg" alt="Setup wiring."
+{{< figure src="/post-imgs/read-spektrum-sat-data/wiring.jpg" alt="Setup wiring."
 width="400px" position="center" style="border-radius: 8px;"
 caption="Hardware setup and circuit wiring." captionPosition="center">}}
 
@@ -108,7 +108,7 @@ I used an Arduino Uno to read the serial data stream from the remote receiver an
 
 In order to determine which protocol my remote receiver used, I probed its serial output via a serial-to-USB converter and [serial port monitoring software](https://www.eltima.com/products/serial-port-monitor/). I figured out which protocol was used by comparing the second byte of each serial message to the datasheet. Mine ended up using the 22ms/2048 DSMX protocol.
 
-{{< figure src="/post-imgs/03-read-spektrum-sat-data/ftdi-wiring.jpg" alt="Serial to USB wiring."
+{{< figure src="/post-imgs/read-spektrum-sat-data/ftdi-wiring.jpg" alt="Serial to USB wiring."
 width="400px" position="center" style="border-radius: 8px;"
 caption="Wiring for the serial to USB converter." captionPosition="center">}}
 

@@ -29,7 +29,7 @@ Then, the boundary points `$a$` and `$b$` and the computed midpoint `$p$` can be
 
 This relationship can be seen in Figure 1. Since $f(p_1)$ and $f(a_1)$ have the same sign in Figure 1, the root must lie between $p_1$ and $b_1$. Then, we can update the new interval to be $p_1$ and $b_1$. Therefore, we can set $a_2 = p_1$ and $b_2 = b_1$. Then, using the above equation, a new midpoint $p_2$ can be computed. The sign check is performed again, and a new interval is determined. This continues until the interval becomes sufficiently small, with the root approximation at the midpoint of the small interval.
 
-{{< figure src="/post-imgs/05-bisection-method/bisect-illustration.png" alt="Bisect Method Visualization" width="500px" position="center" style="border-radius: 8px;" caption="Figure 1. Visualization of the bisection method." captionPosition="center">}}
+{{< figure src="/post-imgs/bisection-method/bisect-illustration.png" alt="Bisect Method Visualization" width="500px" position="center" style="border-radius: 8px;" caption="Figure 1. Visualization of the bisection method." captionPosition="center">}}
 
 ---
 
@@ -110,7 +110,7 @@ plt.ylabel('f(x)')
 plt.grid()
 ```
 
-{{< figure src="/post-imgs/05-bisection-method/fx-plot.png" alt="Plot of f(x)" width="500px" position="center" style="border-radius: 8px;" caption="Figure 2. Plot of f(x)." captionPosition="center">}}
+{{< figure src="/post-imgs/bisection-method/fx-plot.png" alt="Plot of f(x)" width="500px" position="center" style="border-radius: 8px;" caption="Figure 2. Plot of f(x)." captionPosition="center">}}
 
 As we can see, the other solution is between `$x = 0.6$` and `$x = 1.0$`. We'll use these as our initial boundary points: `$a_1 = 0.6$` and `$b_1 = 1.0$`. We can choose a tolerance value of `$\epsilon = 10^{-6}$` and limit the number of iterations to 500. Here is the code for the Bisection Method:
 
@@ -177,7 +177,7 @@ plt.legend()
 plt.grid()
 ```
 
-{{< figure src="/post-imgs/05-bisection-method/fx-root.png" alt="Plot root of f(x)" width="500px" position="center" style="border-radius: 8px;" caption="Figure 3. Thr root of f(x)." captionPosition="center">}}
+{{< figure src="/post-imgs/bisection-method/fx-root.png" alt="Plot root of f(x)" width="500px" position="center" style="border-radius: 8px;" caption="Figure 3. Thr root of f(x)." captionPosition="center">}}
 
 ---
 
