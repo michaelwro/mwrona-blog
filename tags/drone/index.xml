@@ -14,19 +14,19 @@
     
     <item>
       <title>Read Serial Data From Spektrum Remote Receiver</title>
-      <link>https://mwrona.com/posts/03-read-spektrum-rem-data/</link>
+      <link>https://mwrona.com/posts/read-spektrum-rem-data/</link>
       <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/03-read-spektrum-rem-data/</guid>
+      <guid>https://mwrona.com/posts/read-spektrum-rem-data/</guid>
       <description>About six years ago, I purchased a Spektrum DX6i RC plane transmitter to fly my RC planes with. Unfortunately, life got busier and my interests shifted, which sent my planes and controller to retire in the basement. When the idea to build a quadcopter flight controller began to come to fruition, I knew my DX6i controller would be perfect!</description>
     </item>
     
     <item>
       <title>Quadcopter Flight Controller Project Intro</title>
-      <link>https://mwrona.com/posts/02-drone-project-intro/</link>
+      <link>https://mwrona.com/posts/drone-project-intro/</link>
       <pubDate>Mon, 31 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/02-drone-project-intro/</guid>
+      <guid>https://mwrona.com/posts/drone-project-intro/</guid>
       <description>Ever since I was first introduced to the world of flight dynamics and controls, I have wanted to design my own quadcopter flight controller from scratch. I thought it would be a great opportunity to apply my knowledge of electronics and circuitry, programming, and flight controls towards a real-world project.</description>
     </item>
     

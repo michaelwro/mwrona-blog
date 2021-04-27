@@ -6,7 +6,7 @@
 	<meta property="og:title" content="The Bisection Method - Theory and Code" />
 <meta property="og:description" content="Introduction The first few algorithms introduced in numerical methods courses are typically root-finding algorithms. In my opinion, these algorithms are taught first because they are relatively easy to understand and code, and determining roots of a function is a very common math operation." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://mwrona.com/posts/05-bisection-method/" />
+<meta property="og:url" content="https://mwrona.com/posts/bisection-method/" />
 <meta property="article:published_time" content="2020-12-10T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-12-10T00:00:00+00:00" />
 <meta name="twitter:card" content="summary"/>
@@ -107,8 +107,8 @@
 <p>This relationship can be seen in Figure 1. Since $f(p_1)$ and $f(a_1)$ have the same sign in Figure 1, the root must lie between $p_1$ and $b_1$. Then, we can update the new interval to be $p_1$ and $b_1$. Therefore, we can set $a_2 = p_1$ and $b_2 = b_1$. Then, using the above equation, a new midpoint $p_2$ can be computed. The sign check is performed again, and a new interval is determined. This continues until the interval becomes sufficiently small, with the root approximation at the midpoint of the small interval.</p>
 
 <figure class="center" >
-  <a href="/post-imgs/05-bisection-method/bisect-illustration.png" target="_blank">
-    <img src="/post-imgs/05-bisection-method/bisect-illustration.png"  alt="Bisect Method Visualization"   width="500px"   style="border-radius: 8px;"  />
+  <a href="/post-imgs/bisection-method/bisect-illustration.png" target="_blank">
+    <img src="/post-imgs/bisection-method/bisect-illustration.png"  alt="Bisect Method Visualization"   width="500px"   style="border-radius: 8px;"  />
   </a>
   
     <figcaption class="center" >Figure 1. Visualization of the bisection method.</figcaption>
@@ -174,8 +174,8 @@ plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;f
 plt<span style="color:#f92672">.</span>grid()
 </code></pre></div>
 <figure class="center" >
-  <a href="/post-imgs/05-bisection-method/fx-plot.png" target="_blank">
-    <img src="/post-imgs/05-bisection-method/fx-plot.png"  alt="Plot of f(x)"   width="500px"   style="border-radius: 8px;"  />
+  <a href="/post-imgs/bisection-method/fx-plot.png" target="_blank">
+    <img src="/post-imgs/bisection-method/fx-plot.png"  alt="Plot of f(x)"   width="500px"   style="border-radius: 8px;"  />
   </a>
   
     <figcaption class="center" >Figure 2. Plot of f(x).</figcaption>
@@ -237,8 +237,8 @@ plt<span style="color:#f92672">.</span>legend()
 plt<span style="color:#f92672">.</span>grid()
 </code></pre></div>
 <figure class="center" >
-  <a href="/post-imgs/05-bisection-method/fx-root.png" target="_blank">
-    <img src="/post-imgs/05-bisection-method/fx-root.png"  alt="Plot root of f(x)"   width="500px"   style="border-radius: 8px;"  />
+  <a href="/post-imgs/bisection-method/fx-root.png" target="_blank">
+    <img src="/post-imgs/bisection-method/fx-root.png"  alt="Plot root of f(x)"   width="500px"   style="border-radius: 8px;"  />
   </a>
   
     <figcaption class="center" >Figure 3. Thr root of f(x).</figcaption>

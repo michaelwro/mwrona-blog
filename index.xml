@@ -14,46 +14,46 @@
     
     <item>
       <title>Designing a Quaternion-Based EKF for Accelerometer, Gyroscope, &amp; Magnetometer Fusion</title>
-      <link>https://mwrona.com/posts/06-attitude-ekf/</link>
+      <link>https://mwrona.com/posts/attitude-ekf/</link>
       <pubDate>Sun, 20 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/06-attitude-ekf/</guid>
+      <guid>https://mwrona.com/posts/attitude-ekf/</guid>
       <description>One of the most important parts of any aerospace control system are the sensor fusion and state estimation algorithms. This software system is responsible for recording sensor observations and &amp;lsquo;fusing&amp;rsquo; measurements to estimate parameters such as orientation, position, and speed. The quality of sensor fusion algorithms will directly influence how well your control system will perform.</description>
     </item>
     
     <item>
       <title>The Bisection Method - Theory and Code</title>
-      <link>https://mwrona.com/posts/05-bisection-method/</link>
+      <link>https://mwrona.com/posts/bisection-method/</link>
       <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/05-bisection-method/</guid>
+      <guid>https://mwrona.com/posts/bisection-method/</guid>
       <description>Introduction The first few algorithms introduced in numerical methods courses are typically root-finding algorithms. In my opinion, these algorithms are taught first because they are relatively easy to understand and code, and determining roots of a function is a very common math operation.</description>
     </item>
     
     <item>
       <title>Roll and Pitch Angles From Accelerometer Sensors</title>
-      <link>https://mwrona.com/posts/04-accel-roll-pitch/</link>
+      <link>https://mwrona.com/posts/accel-roll-pitch/</link>
       <pubDate>Fri, 27 Nov 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/04-accel-roll-pitch/</guid>
+      <guid>https://mwrona.com/posts/accel-roll-pitch/</guid>
       <description>One of the most important components in control systems for airplanes, fighter jets, quadcopters, and rockets is the AHRS, or Attitude and Heading Reference System. As you can guess, the AHRS tells a system its current attitude orientation and heading. Attitude measurements are typically given as roll and pitch angles, and heading is relative to either magnetic or true north.</description>
     </item>
     
     <item>
       <title>Read Serial Data From Spektrum Remote Receiver</title>
-      <link>https://mwrona.com/posts/03-read-spektrum-rem-data/</link>
+      <link>https://mwrona.com/posts/read-spektrum-rem-data/</link>
       <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/03-read-spektrum-rem-data/</guid>
+      <guid>https://mwrona.com/posts/read-spektrum-rem-data/</guid>
       <description>About six years ago, I purchased a Spektrum DX6i RC plane transmitter to fly my RC planes with. Unfortunately, life got busier and my interests shifted, which sent my planes and controller to retire in the basement. When the idea to build a quadcopter flight controller began to come to fruition, I knew my DX6i controller would be perfect!</description>
     </item>
     
     <item>
       <title>Quadcopter Flight Controller Project Intro</title>
-      <link>https://mwrona.com/posts/02-drone-project-intro/</link>
+      <link>https://mwrona.com/posts/drone-project-intro/</link>
       <pubDate>Mon, 31 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/02-drone-project-intro/</guid>
+      <guid>https://mwrona.com/posts/drone-project-intro/</guid>
       <description>Ever since I was first introduced to the world of flight dynamics and controls, I have wanted to design my own quadcopter flight controller from scratch. I thought it would be a great opportunity to apply my knowledge of electronics and circuitry, programming, and flight controls towards a real-world project.</description>
     </item>
     
@@ -68,10 +68,10 @@
     
     <item>
       <title>The &#39;Big Dealz&#39; PC Build</title>
-      <link>https://mwrona.com/posts/01-first-pc-flip/</link>
+      <link>https://mwrona.com/posts/first-pc-flip/</link>
       <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/01-first-pc-flip/</guid>
+      <guid>https://mwrona.com/posts/first-pc-flip/</guid>
       <description>If you want to get the biggest bang for your buck when building a PC, you&amp;rsquo;re going to have to buy secondhand parts - there&amp;rsquo;s no denying it! Believe me, as someone whose net worth is defined primarily by electronics, you&amp;rsquo;re going to want to squeeze as much value as possible out of your limited cash.</description>
     </item>
     

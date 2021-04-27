@@ -14,19 +14,19 @@
     
     <item>
       <title>The Bisection Method - Theory and Code</title>
-      <link>https://mwrona.com/posts/05-bisection-method/</link>
+      <link>https://mwrona.com/posts/bisection-method/</link>
       <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/05-bisection-method/</guid>
+      <guid>https://mwrona.com/posts/bisection-method/</guid>
       <description>Introduction The first few algorithms introduced in numerical methods courses are typically root-finding algorithms. In my opinion, these algorithms are taught first because they are relatively easy to understand and code, and determining roots of a function is a very common math operation.</description>
     </item>
     
     <item>
       <title>Read Serial Data From Spektrum Remote Receiver</title>
-      <link>https://mwrona.com/posts/03-read-spektrum-rem-data/</link>
+      <link>https://mwrona.com/posts/read-spektrum-rem-data/</link>
       <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/03-read-spektrum-rem-data/</guid>
+      <guid>https://mwrona.com/posts/read-spektrum-rem-data/</guid>
       <description>About six years ago, I purchased a Spektrum DX6i RC plane transmitter to fly my RC planes with. Unfortunately, life got busier and my interests shifted, which sent my planes and controller to retire in the basement. When the idea to build a quadcopter flight controller began to come to fruition, I knew my DX6i controller would be perfect!</description>
     </item>
     

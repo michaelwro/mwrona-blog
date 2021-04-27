@@ -14,10 +14,10 @@
     
     <item>
       <title>The Bisection Method - Theory and Code</title>
-      <link>https://mwrona.com/posts/05-bisection-method/</link>
+      <link>https://mwrona.com/posts/bisection-method/</link>
       <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://mwrona.com/posts/05-bisection-method/</guid>
+      <guid>https://mwrona.com/posts/bisection-method/</guid>
       <description>Introduction The first few algorithms introduced in numerical methods courses are typically root-finding algorithms. In my opinion, these algorithms are taught first because they are relatively easy to understand and code, and determining roots of a function is a very common math operation.</description>
     </item>
     

@@ -6,7 +6,7 @@
 	<meta property="og:title" content="Read Serial Data From Spektrum Remote Receiver" />
 <meta property="og:description" content="About six years ago, I purchased a Spektrum DX6i RC plane transmitter to fly my RC planes with. Unfortunately, life got busier and my interests shifted, which sent my planes and controller to retire in the basement. When the idea to build a quadcopter flight controller began to come to fruition, I knew my DX6i controller would be perfect!" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://mwrona.com/posts/03-read-spektrum-rem-data/" />
+<meta property="og:url" content="https://mwrona.com/posts/read-spektrum-rem-data/" />
 <meta property="article:published_time" content="2020-09-07T00:00:00+00:00" />
 <meta property="article:modified_time" content="2020-09-07T00:00:00+00:00" />
 <meta name="twitter:card" content="summary"/>
@@ -93,8 +93,8 @@
 <p>I had always wondered what the little dongle-thingy was attached to my AR6210 receiver. I did some research and discovered this was a <a href="https://www.spektrumrc.com/Products/Default.aspx?ProdID=SPM9645">Spektrum DSMX Remote Receiver</a>. I did some more digging and found out that the three wires connecting the remote receiver to the AR6210 were power (+3.3V, orange), data (gray), and ground (black) wires. It turns out that the connection between the two was a serial connection that contained channel data! After this amazing discovery, I began reverse engineering the DSMX communication protocol and eventually succeeded: I figured out how to extract the six channel/transmitter stick positions from the DSMX serial byte stream. Now, time to tell you how to do the same!</p>
 
 <figure class="center" >
-  <a href="/post-imgs/03-read-spektrum-sat-data/rem-rec-and-rc-rec.jpg" target="_blank">
-    <img src="/post-imgs/03-read-spektrum-sat-data/rem-rec-and-rc-rec.jpg"  alt="Remote Receiver and RC Receiver"   width="400px"   style="border-radius: 8px;"  />
+  <a href="/post-imgs/read-spektrum-sat-data/rem-rec-and-rc-rec.jpg" target="_blank">
+    <img src="/post-imgs/read-spektrum-sat-data/rem-rec-and-rc-rec.jpg"  alt="Remote Receiver and RC Receiver"   width="400px"   style="border-radius: 8px;"  />
   </a>
   
     <figcaption class="center" >Spektrum Remote Receiver and AR6210 RC Receiver.</figcaption>
@@ -191,8 +191,8 @@
 <p>In order to make the remote receiver breadboard-compatible, I needed to make my own custom adapter. I bought an additional <a href="https://www.amazon.com/gp/product/B000ND6IXW/ref=ppx_yo_dt_b_asin_title_o07_s00?ie=UTF8&amp;psc=1">remote receiver cable</a> and soldered its wires to the wires of a standard servo connector (see image below).</p>
 
 <figure class="center" >
-  <a href="/post-imgs/03-read-spektrum-sat-data/rec-wire-conv.jpg" target="_blank">
-    <img src="/post-imgs/03-read-spektrum-sat-data/rec-wire-conv.jpg"  alt="Custom wire adaptor."   width="400px"   style="border-radius: 8px;"  />
+  <a href="/post-imgs/read-spektrum-sat-data/rec-wire-conv.jpg" target="_blank">
+    <img src="/post-imgs/read-spektrum-sat-data/rec-wire-conv.jpg"  alt="Custom wire adaptor."   width="400px"   style="border-radius: 8px;"  />
   </a>
   
     <figcaption class="center" >Custom adapter to convert the remote receiver connector to a standard servo plug.</figcaption>
@@ -201,8 +201,8 @@
 
 
 <figure class="center" >
-  <a href="/post-imgs/03-read-spektrum-sat-data/wiring.jpg" target="_blank">
-    <img src="/post-imgs/03-read-spektrum-sat-data/wiring.jpg"  alt="Setup wiring."   width="400px"   style="border-radius: 8px;"  />
+  <a href="/post-imgs/read-spektrum-sat-data/wiring.jpg" target="_blank">
+    <img src="/post-imgs/read-spektrum-sat-data/wiring.jpg"  alt="Setup wiring."   width="400px"   style="border-radius: 8px;"  />
   </a>
   
     <figcaption class="center" >Hardware setup and circuit wiring.</figcaption>
@@ -216,8 +216,8 @@
 <p>In order to determine which protocol my remote receiver used, I probed its serial output via a serial-to-USB converter and <a href="https://www.eltima.com/products/serial-port-monitor/">serial port monitoring software</a>. I figured out which protocol was used by comparing the second byte of each serial message to the datasheet. Mine ended up using the 22ms/2048 DSMX protocol.</p>
 
 <figure class="center" >
-  <a href="/post-imgs/03-read-spektrum-sat-data/ftdi-wiring.jpg" target="_blank">
-    <img src="/post-imgs/03-read-spektrum-sat-data/ftdi-wiring.jpg"  alt="Serial to USB wiring."   width="400px"   style="border-radius: 8px;"  />
+  <a href="/post-imgs/read-spektrum-sat-data/ftdi-wiring.jpg" target="_blank">
+    <img src="/post-imgs/read-spektrum-sat-data/ftdi-wiring.jpg"  alt="Serial to USB wiring."   width="400px"   style="border-radius: 8px;"  />
   </a>
   
     <figcaption class="center" >Wiring for the serial to USB converter.</figcaption>
