@@ -18,7 +18,7 @@ googleAnalytics = "UA-176773333-1"
 summaryLength = 40
 
 # Copyright message at the page footer
-copyright = "Copyright © Michael Wrona 2020"
+copyright = "Copyright © Michael Wrona 2021"
 
 
 [params]
@@ -41,10 +41,16 @@ copyright = "Copyright © Michael Wrona 2020"
 
     # SOCIAL LINKS
     [[params.social]]
-        name = "Github"
+        name    = "YouTube: @MicWro Engr"
+        icon    = "youtube"
+        url     = "https://www.youtube.com/channel/UCIeZzuXHGm7zqSFvT8xGoIQ"
+    
+    [[params.social]]
+        name = "GitHub: @michaelwro"
         icon = "github"
         url = "https://github.com/michaelwro"
     
+
     
 
 # Configure website tabs here
