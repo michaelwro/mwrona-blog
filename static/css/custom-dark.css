@@ -7,13 +7,13 @@ body {
 
 /* Text selection/highlight coloring, #666 default */
 ::selection {
-    background: #e2bf9e;
+    background: #c07631;
     text-shadow: none;
 }
 
 /* Mozilla Firefox highlight */
 ::-moz-selection {
-    background: #e2bf9e;  /*#487cdb*/
+    background: #c07631;  /*#487cdb, #e2bf9e*/
     text-shadow: none;
 }
 
