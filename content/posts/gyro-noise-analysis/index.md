@@ -27,7 +27,7 @@ There are other noise parameters that one can determine, but in my opinion, thes
 
 [Random walk](https://en.wikipedia.org/wiki/Random_walk) is a mathematical model used to describe a random process that consists of a random succession of steps, typically applied to time-series data. The analogy that I like to use is as follows:
 
-: Let's say you're standingon the 50 yard line of a football field with a coin. If you flip heads, you move forward one step, and if you flip tails, you move back one step. Do this 100 times. You'll either end up forwards or backwards of your starting point. You had equal probability of moving forwards or backwards at each coin flip. If you were to restart on the 50 yard line and repeat the 100 coin flips many times, you'd end in a different location every time. This is the nature of a random walk process!
+: Let's say you're standing on the 50 yard line of a football field with a coin. If you flip heads, you move forward one step, and if you flip tails, you move back one step. Do this 100 times. You'll either end up forwards or backwards of your starting point. You had equal probability of moving forwards or backwards at each coin flip. If you were to restart on the 50 yard line and repeat the 100 coin flips many times, you'd end in a different location every time. This is the nature of a random walk process!
 
 Here's how random walk relates to gyros. Gyro rate measurements are typically time-integrated to compute angles. This integration will drift over time due to sensor noise. This drift appears as the integrated gyro angle taking random steps from sample to sample, hence the term gyro ANGLE random walk (ARW).
 
