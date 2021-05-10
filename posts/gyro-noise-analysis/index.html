@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Gyro Noise Analysis and Allan Deviation &#43; IMU Example - Michael Wrona&#39;s Blog</title><link rel="icon" type="image/png" href=/favicon.png /><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="Gyro Noise Analysis and Allan Deviation &#43; IMU Example" />
+<meta property="og:description" content="Rate gyros measure angular rotation rate, or angular velocity, in units of degrees per second [deg/s] or radians per second [rad/s]. Gyros are used across many diverse applications. Since I come from an aerospace background, I know that gyros are extremely important sensors in rockets, satellies, missiles, and airplane autopilots." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://mwrona.com/posts/gyro-noise-analysis/" />
+<meta property="article:published_time" content="2021-04-27T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-04-27T00:00:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Gyro Noise Analysis and Allan Deviation &#43; IMU Example"/>
+<meta name="twitter:description" content="Rate gyros measure angular rotation rate, or angular velocity, in units of degrees per second [deg/s] or radians per second [rad/s]. Gyros are used across many diverse applications. Since I come from an aerospace background, I know that gyros are extremely important sensors in rockets, satellies, missiles, and airplane autopilots."/>
+<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,300italic,400italic|Raleway:200,300" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mwrona.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mwrona.com/css/main.css" /><link rel="stylesheet" type="text/css" href="https://mwrona.com/css/dark.css"  />
+	<link rel="stylesheet" type="text/css" href="https://mwrona.com/css/custom-dark.css"  />
+
+	<script src="https://mwrona.com/js/feather.min.js"></script>
+	
+	<script src="https://mwrona.com/js/main.js"></script>
+
+	<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        tags: 'ams'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+	<div class="container wrapper post">
+		<div class="header">
+	<h1 class="site-title"><a href="https://mwrona.com/">Michael Wrona&#39;s Blog</a></h1>
+	<div class="site-description"><h2>Engineering, coding, tech, and other cool projects!</h2><nav class="nav social">
+			<ul class="flat"><a href="https://www.youtube.com/channel/UCIeZzuXHGm7zqSFvT8xGoIQ" title="YouTube: @MicWro Engr" target="_blank" rel="noopener noreferrer"><i data-feather="youtube"></i></a><a href="https://github.com/michaelwro" title="GitHub: @michaelwro" target="_blank" rel="noopener noreferrer"><i data-feather="github"></i></a></ul>
+		</nav>
+	</div>
+
+	<nav class="nav">
+		<ul class="flat">
+			
+			<li>
+				<a href="/">Home</a>
+			</li>
+			
+			<li>
+				<a href="/posts">All Posts</a>
+			</li>
+			
+			<li>
+				<a href="/tags">Post Tags</a>
+			</li>
+			
+			<li>
+				<a href="/about">About</a>
+			</li>
+			
+		</ul>
+	</nav>
+</div>
+
+
+		<div class="post-header">
+			<h1 class="title">Gyro Noise Analysis and Allan Deviation &#43; IMU Example</h1>
+			<div class="meta">Posted at &mdash; Apr 27, 2021</div>
+		</div>
+
+		<div class="markdown">
+			<p><a href="https://en.wikipedia.org/wiki/Gyroscope">Rate gyros</a> measure angular rotation rate, or angular velocity, in units of degrees per second [deg/s] or radians per second [rad/s]. Gyros are used across many diverse applications. Since I come from an aerospace background, I know that gyros are extremely important sensors in rockets, satellies, missiles, and airplane autopilots.</p>
+<p>When <a href="https://www.spacex.com/">SpaceX</a> and <a href="https://www.rocketlabusa.com/">Rocket Lab</a> designed control systems for their rockets, they invested a significant amount of time and resources into creating very accurate vehicle simulations. One aspect of creating their simulation involved modelling the sensors engineers planned on incorporating into their final control systems. Properly modelling sensors enabled engineers to analyze how well the system performed with different sensor configurations and determined the best one.</p>
+<p>Since gyros are arguably the most important sensors in a control system, a proper gyro model is a significant contributor towards achieving an accurate vehicle simulation. And in order to model a gyro sensor, we need to characterize its noise!</p>
+<p>In this article, I&rsquo;ll explain the two most important gyro noise characteristics and how to determine them from an Allan deviation plot (with code, too). I&rsquo;ll also compute the Allan deviation and noise characteristics of the <a href="https://cdn-learn.adafruit.com/assets/assets/000/040/671/original/FXAS21002.pdf?1491475056">NXP FXAS21002 3-DOF gyro</a>.</p>
+<h2 id="gyro-noise-parameters">Gyro Noise Parameters</h2>
+<p>In my opinion, the two most important gyro noise characteristics to consider are:</p>
+<ul>
+<li><strong>Angle Random Walk</strong> (unit: <code>$\deg / \sqrt{hr}$</code>)</li>
+<li><strong>Bias Instability</strong> (unit: <code>$\deg / hr$</code>)</li>
+</ul>
+<p>There are other noise parameters that one can determine, but in my opinion, these are the two most important.</p>
+<h3 id="angle-random-walk-arw">Angle Random Walk (ARW)</h3>
+<dl>
+<dt><a href="https://en.wikipedia.org/wiki/Random_walk">Random walk</a> is a mathematical model used to describe a random process that consists of a random succession of steps, typically applied to time-series data. The analogy that I like to use is as follows:</dt>
+<dd>
+<p>Let&rsquo;s say you&rsquo;re standingon the 50 yard line of a football field with a coin. If you flip heads, you move forward one step, and if you flip tails, you move back one step. Do this 100 times. You&rsquo;ll either end up forwards or backwards of your starting point. You had equal probability of moving forwards or backwards at each coin flip. If you were to restart on the 50 yard line and repeat the 100 coin flips many times, you&rsquo;d end in a different location every time. This is the nature of a random walk process!</p>
+</dd>
+</dl>
+<p>Here&rsquo;s how random walk relates to gyros. Gyro rate measurements are typically time-integrated to compute angles. This integration will drift over time due to sensor noise. This drift appears as the integrated gyro angle taking random steps from sample to sample, hence the term gyro ANGLE random walk (ARW).</p>
+<p>The unit for angle random walk is typically <code>$deg / \sqrt{hr}$</code>, but is sometimes given in <code>$deg / \sqrt{sec}$</code>. If we multiply the angle random walk by the square root of time, the standard deviation <code>$\sigma$</code> of drift due to noise can be computed. Therefore, angle measurements from a gyro with low ARW will not drift much over time due to random noise. Angle measurements from a gyro with high ARW will drift more due to random noise with a higher deviation. Cheap MEMS gyros, like the <a href="https://www.sparkfun.com/products/11028">MPU6050</a> and <a href="https://www.bosch-sensortec.com/products/smart-sensors/bno055/">BNO055</a>, will have higher ARW compared to fancy (and very expensive) laser or fiber optic gyros.</p>
+<h3 id="bias-instability">Bias Instability</h3>
+<p>In my opinion, gyro bias instability is the most important charactersitic to consider when comparing gyro sensors. All gyro sensors, regardless of price or quality, will have measurement biases. Measurement bias is a constant measurement offset from true. <strong>Gyro biases will cause angle drift in time-integrated data.</strong> For example, When the gyro is switched on and remains stationary, the sensor will read a slight non-zero rate measurement. This bias is called turn-on bias.</p>
+
+<figure class="center" >
+  <a href="/post-imgs/attitude-ekf/gyro-bias.png" target="_blank">
+    <img src="/post-imgs/attitude-ekf/gyro-bias.png"  alt="Illustration of gyro bias"   width="400px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >Illustration of gyro bias (b).</figcaption>
+  
+</figure>
+
+
+<figure class="center" >
+  <a href="/post-imgs/attitude-ekf/gyro-drift.png" target="_blank">
+    <img src="/post-imgs/attitude-ekf/gyro-drift.png"  alt="Illustration of gyro drift"   width="400px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >Illustration of integrated gyro angle drift over time.</figcaption>
+  
+</figure>
+
+<p>In reality, gyro bias is not constant - it gradually changes over time. Gyro bias instability is a measure of how much gyro biases drift over time. Gyro bias instability is typically given in units of <code>$deg / hr$</code>. Low bias instability means that gyro biases are relatively stable and don&rsquo;t change much. High bias instability means that gyro biases are less stable and change quicker.</p>
+<p>Another way to illustrate the importance of gyro bias instability is from a sensor fusion/state estimation perspective. State estimation algorithms (such as <a href="/posts/attitude-ekf/">Kalman Filters</a>) that fuse gyro, accelerometer, and GPS data will typically estimate gyro biases. These estimation algorithms commonly assume gyro biases are constant. If the gyro sensor bias instability is high, the bias will drift and the estimation algorithms will have a difficult time estimating biases.</p>
+<h2 id="allan-deviation">Allan Deviation</h2>
+<p><a href="http://home.engineering.iastate.edu/~shermanp/AERE432/lectures/Rate%20Gyros/Allan%20variance.pdf">Allan variance</a> was originally derived to measure the noise characteristics and stability of clock oscillators. More specifically, the frequency stability of oscillators. Allan variance analyses are used to estimate the stability of a time-domain signal due to noise processes, not systematic errors such as temperature effects. I should note Allan deviation is simply the square root of Allan variance, i.e.</p>
+<p><code>$$Deviation = \sqrt{Variance}$$</code></p>
+<p>Allan deviation can also be applied to analyze the stability and noise characteristics of gyro sensors. We will compute the Allan deviation of gyro angle data in degrees. The result of an Allan deviation analysis is a plot, typically plotted on a log scale. The x-axis will be time in seconds, and the y-axis will be Allan deviation in degrees per second.</p>
+<h2 id="noise-analysis-example">Noise Analysis Example</h2>
+<p>I will be analyzing the <a href="(https://cdn-learn.adafruit.com/assets/assets/000/040/671/original/FXAS21002.pdf?1491475056)">FXAS21002 MEMS gyro</a> sensor within <a href="https://www.adafruit.com/product/3463">Adafruit&rsquo;s NXP Precision 9-DOF IMU</a>. First, I&rsquo;ll explain the data collection process. Then, I&rsquo;ll walk you through my code to compute the Allan deviation. Finally, I&rsquo;ll demonstrate how to compute the angle random walk and bias instability of our gyro sensor from an Allan deviation plot.</p>
+<h3 id="data-collection">Data Collection</h3>
+<p>Since we are measuring the long-term stability of a gyro, we will need to collect data for a long time. I recorded <strong>stationary</strong> gyro data at 100Hz for 6 hours. I wrote some Arduino code to read the I2C sensor and print data over a serial connection so that my computer could read and write it to a CSV file.</p>
+<h4 id="arduino-code-c-simplified">Arduino Code (C++, Simplified)</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">....
+....
+
+<span style="color:#66d9ef">void</span> loop()
+{
+    now <span style="color:#f92672">=</span> millis();
+
+    <span style="color:#66d9ef">if</span> (now <span style="color:#f92672">-</span> then <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">10</span>)
+    {
+        <span style="color:#75715e">// Data in [rad/s]
+</span><span style="color:#75715e"></span>        Serial.print(Gyro.GetGx(), <span style="color:#ae81ff">6</span>); Serial.print(<span style="color:#e6db74">&#34;,&#34;</span>);
+        Serial.print(Gyro.GetGy(), <span style="color:#ae81ff">6</span>); Serial.print(<span style="color:#e6db74">&#34;,&#34;</span>);
+        Serial.println(Gyro.GetGz(), <span style="color:#ae81ff">6</span>);
+        then <span style="color:#f92672">=</span> now;
+    }
+}
+</code></pre></div><h4 id="data-logging-code-python">Data Logging Code (Python)</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> csv
+<span style="color:#f92672">import</span> serial
+
+SERIAL_PORT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;COM10&#39;</span>
+SERIAL_BAUD <span style="color:#f92672">=</span> <span style="color:#ae81ff">115200</span>
+OUT_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;gyro-data.csv&#39;</span>
+FS <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>  <span style="color:#75715e"># Sample frequency [Hz]</span>
+MEAS_DUR_SEC <span style="color:#f92672">=</span> <span style="color:#ae81ff">21600</span>  <span style="color:#75715e"># (6 hrs) Seconds to record data for</span>
+
+TS <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> FS  <span style="color:#75715e"># Sample period [s]</span>
+N_SAMPLES <span style="color:#f92672">=</span> int(MEAS_DUR_SEC <span style="color:#f92672">*</span> FS)  <span style="color:#75715e"># Number of samples to record</span>
+
+<span style="color:#75715e"># Init. serial</span>
+ser <span style="color:#f92672">=</span> serial<span style="color:#f92672">.</span>Serial(SERIAL_PORT, SERIAL_BAUD)
+ser<span style="color:#f92672">.</span>flush()
+
+n <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
+<span style="color:#66d9ef">with</span> open(OUT_FILE, newline<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;&#39;</span>, mode<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;w&#39;</span>) <span style="color:#66d9ef">as</span> csvfile:
+    csvwriter <span style="color:#f92672">=</span> csv<span style="color:#f92672">.</span>writer(csvfile, delimiter<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;,&#39;</span>)
+
+    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&lt;</span> N_SAMPLES):
+        <span style="color:#75715e"># Read serial stream and extract data</span>
+        dataList <span style="color:#f92672">=</span> ser<span style="color:#f92672">.</span>readline()<span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#39;utf-8&#39;</span>)<span style="color:#f92672">.</span>strip(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#39;</span>)<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;,&#39;</span>)
+
+        <span style="color:#75715e"># Write data to CSV file: gx,gy,gz</span>
+        csvwriter<span style="color:#f92672">.</span>writerow(dataList)
+        
+        n <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
+</code></pre></div><h3 id="download-my-data-file">Download My Data File</h3>
+<p>The resulting CSV file was about 60MB in size. You can download it for yourself <a href="/post-docs/gyro-noise-analysis/gyrodata_100hz_6hrs.csv">at this link</a>.</p>
+<h3 id="allan-deviation-computation">Allan Deviation Computation</h3>
+<p>We will be computing the Allan deviation of gyro angle data in degrees. First, I imported the gyro rate data into numpy arrays. Then, I converted the raw gyro rate data from <code>$rad/s$</code> to <code>$deg/s$</code>. Next, I Euler integrated the rate data to compute gyro orientation data in <code>$deg$</code> by computing the cumulative sum (<code>numpy.cumsum()</code>) of the data and multiplying it by the sample period (0.01sec). I then passed the gyro angle data to my Allan deviation function and computed the Allan variance in <code>$deg/s$</code>. Finally, I plotted the data on a log-scale plot.</p>
+<h4 id="allan-variance-code-python">Allan Variance Code (Python)</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> numpy <span style="color:#f92672">as</span> np
+<span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#f92672">as</span> plt
+
+
+<span style="color:#75715e"># Config. params</span>
+DATA_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;gyro-data.csv&#39;</span>  <span style="color:#75715e"># CSV data file &#34;gx,gy,gz&#34;</span>
+fs <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>  <span style="color:#75715e"># Sample rate [Hz]</span>
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
+    <span style="color:#f92672">....</span>
+
+<span style="color:#75715e"># Load CSV into np array</span>
+dataArr <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>genfromtxt(DATA_FILE, delimiter<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;,&#39;</span>)
+ts <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> fs
+
+<span style="color:#75715e"># Separate into arrays</span>
+gx <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180.0</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)  <span style="color:#75715e"># [deg/s]</span>
+gy <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">1</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180.0</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)
+gz <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">2</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180.0</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)
+
+<span style="color:#75715e"># Calculate gyro angles</span>
+thetax <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>cumsum(gx) <span style="color:#f92672">*</span> ts  <span style="color:#75715e"># [deg]</span>
+thetay <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>cumsum(gy) <span style="color:#f92672">*</span> ts
+thetaz <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>cumsum(gz) <span style="color:#f92672">*</span> ts
+
+<span style="color:#75715e"># Compute Allan deviations</span>
+(taux, adx) <span style="color:#f92672">=</span> AllanDeviation(thetax, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
+(tauy, ady) <span style="color:#f92672">=</span> AllanDeviation(thetay, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
+(tauz, adz) <span style="color:#f92672">=</span> AllanDeviation(thetaz, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
+
+<span style="color:#75715e"># Plot data on log-scale</span>
+plt<span style="color:#f92672">.</span>figure()
+plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Gyro Allan Deviations&#39;</span>)
+plt<span style="color:#f92672">.</span>plot(taux, adx, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gx&#39;</span>)
+plt<span style="color:#f92672">.</span>plot(tauy, ady, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gy&#39;</span>)
+plt<span style="color:#f92672">.</span>plot(tauz, adz, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gz&#39;</span>)
+plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">r</span><span style="color:#e6db74">&#39;$\tau$ [sec]&#39;</span>)
+plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Deviation [deg/sec]&#39;</span>)
+plt<span style="color:#f92672">.</span>grid(True, which<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;both&#34;</span>, ls<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-&#34;</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;0.65&#39;</span>)
+plt<span style="color:#f92672">.</span>legend()
+plt<span style="color:#f92672">.</span>xscale(<span style="color:#e6db74">&#39;log&#39;</span>)
+plt<span style="color:#f92672">.</span>yscale(<span style="color:#e6db74">&#39;log&#39;</span>)
+plt<span style="color:#f92672">.</span>show()
+</code></pre></div><h4 id="allan-deviation-algorithm-python">Allan Deviation Algorithm (Python)</h4>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
+    <span style="color:#e6db74">&#34;&#34;&#34;Compute the Allan deviation (sigma) of time-series data.
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Algorithm obtained from Mathworks:
+</span><span style="color:#e6db74">    https://www.mathworks.com/help/fusion/ug/inertial-sensor-noise-analysis-using-allan-variance.html
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">    Args
+</span><span style="color:#e6db74">    ----
+</span><span style="color:#e6db74">        dataArr (numpy.ndarray): 1D data array
+</span><span style="color:#e6db74">        fs (int, float): Data sample frequency in Hz
+</span><span style="color:#e6db74">        maxNumM (int): Number of output points
+</span><span style="color:#e6db74">    
+</span><span style="color:#e6db74">    Returns
+</span><span style="color:#e6db74">    -------
+</span><span style="color:#e6db74">        (taus, allanDev): Tuple of results
+</span><span style="color:#e6db74">        taus (numpy.ndarray): Array of tau values
+</span><span style="color:#e6db74">        allanDev (numpy.ndarray): Array of computed Allan deviations
+</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+    ts <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> fs
+    N <span style="color:#f92672">=</span> len(dataArr)
+    Mmax <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">**</span>np<span style="color:#f92672">.</span>floor(np<span style="color:#f92672">.</span>log2(N <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>))
+    M <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>logspace(np<span style="color:#f92672">.</span>log10(<span style="color:#ae81ff">1</span>), np<span style="color:#f92672">.</span>log10(Mmax), num<span style="color:#f92672">=</span>maxNumM)
+    M <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>ceil(M)  <span style="color:#75715e"># Round up to integer</span>
+    M <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(M)  <span style="color:#75715e"># Remove duplicates</span>
+    taus <span style="color:#f92672">=</span> M <span style="color:#f92672">*</span> ts  <span style="color:#75715e"># Compute &#39;cluster durations&#39; tau</span>
+
+    <span style="color:#75715e"># Compute Allan variance</span>
+    allanVar <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>zeros(len(M))
+    <span style="color:#66d9ef">for</span> i, mi <span style="color:#f92672">in</span> enumerate(M):
+        twoMi <span style="color:#f92672">=</span> int(<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> mi)
+        mi <span style="color:#f92672">=</span> int(mi)
+        allanVar[i] <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>sum(
+            (dataArr[twoMi:N] <span style="color:#f92672">-</span> (<span style="color:#ae81ff">2.0</span> <span style="color:#f92672">*</span> dataArr[mi:N<span style="color:#f92672">-</span>mi]) <span style="color:#f92672">+</span> dataArr[<span style="color:#ae81ff">0</span>:N<span style="color:#f92672">-</span>twoMi])<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>
+        )
+    
+    allanVar <span style="color:#f92672">/=</span> (<span style="color:#ae81ff">2.0</span> <span style="color:#f92672">*</span> taus<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">*</span> (N <span style="color:#f92672">-</span> (<span style="color:#ae81ff">2.0</span> <span style="color:#f92672">*</span> M))
+    <span style="color:#66d9ef">return</span> (taus, np<span style="color:#f92672">.</span>sqrt(allanVar))  <span style="color:#75715e"># Return deviation (dev = sqrt(var))</span>
+</code></pre></div><h2 id="interpreting-allan-deviation-plots">Interpreting Allan Deviation Plots</h2>
+<p>Allan deviation plots are always given on a log scale plot (X and Y axes are log-scale). The X-axis is typically in units of seconds or hours, and the Y-axis Allan deviation in units of <code>$deg/hr$</code> or <code>$deg/sec$</code>. Our code&rsquo;s plot is in units of seconds and <code>$deg/sec$</code>. I&rsquo;ll use the X-gyro (gx) data for example calculations.</p>
+
+<figure class="center" >
+  <a href="/post-imgs/gyro-noise-analysis/allan-dev-plot.png" target="_blank">
+    <img src="/post-imgs/gyro-noise-analysis/allan-dev-plot.png"  alt="Allan deviation plot"   width="600px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >Allan deviation plot for FXAS21002 gyro</figcaption>
+  
+</figure>
+
+<h3 id="gaussian-white-noise">Gaussian White Noise</h3>
+<p>We can determine if our gyro has Guassian white noise from an Allan deviation plot. If it does, then the slope of the Allan deviation plot on the left side should be -0.5. I fit a curve with a slope of -0.5 to our X-gyro data and got this plot:</p>
+
+<figure class="center" >
+  <a href="/post-imgs/gyro-noise-analysis/gx-slope.png" target="_blank">
+    <img src="/post-imgs/gyro-noise-analysis/gx-slope.png"  alt="GWN plot"   width="600px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >-0.5 slope linear curve fit to gyro X-data.</figcaption>
+  
+</figure>
+
+<p>The -0.5 slope line matches well with our plot. Therefore, our sensor has Guassian white noise. This is important to verify, because most sensor fusion algorithms, such as Kalman Filters, assume state observations (measurements) have Gaussian white noise.</p>
+<h3 id="angle-random-walk">Angle Random Walk</h3>
+<p>First, determine the Allan deviation at <code>$\tau = 1s = 10^{0}s$</code>. For my X-gyro data, the Allan deviation is about <code>$0.026 deg/s$</code>. Then, we multiply this by 60 to get angle random walk in <code>$deg / \sqrt{hr}$</code>.</p>
+<p><code>$$ ARW = 0.026 \frac{deg}{s} * 60 \frac{s}{\sqrt{hr}} $$</code></p>
+<p><code>$$ ARW = 1.56 \frac{deg}{\sqrt{hr}} $$</code></p>
+
+<figure class="center" >
+  <a href="/post-imgs/gyro-noise-analysis/allan-dev-plot-arw.png" target="_blank">
+    <img src="/post-imgs/gyro-noise-analysis/allan-dev-plot-arw.png"  alt="ARW plot"   width="600px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >Angle random walk computation.</figcaption>
+  
+</figure>
+
+<p>Therefore, our X-gyro angle random walk is <code>$1.56 deg/\sqrt{hr}$</code>.</p>
+<h3 id="bias-instability-1">Bias Instability</h3>
+<p>Computing bias instability is a bit trickier. As we can see in the Allan deviation plot, the data reaches a minimum before increasing again. First, determine the Allan deviation at this minimum point in <code>$deg/s$</code>. For my X-gyro data, this point was at <code>$\tau=129.1s$</code> and the deviation was <code>$0.005 deg/s$</code>. Then, we divide this value by 0.664 and multiply the result by 3600. This yields bias instability in <code>$deg/hr$</code>. The 0.664 is a dimensionless value specified in <a href="https://ieeexplore.ieee.org/document/660628">IEEE Standard 952-1997</a> and is a constant in some icky math equation.</p>
+<p><code>$$ BI = 0.005 \frac{deg}{s} * \frac{1}{0.664} * 3600\frac{s}{hr} $$</code></p>
+<p><code>$$ BI = 27.1 deg / hr $$</code></p>
+
+<figure class="center" >
+  <a href="/post-imgs/gyro-noise-analysis/allan-dev-plot-bi.png" target="_blank">
+    <img src="/post-imgs/gyro-noise-analysis/allan-dev-plot-bi.png"  alt="BI plot"   width="600px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >Point to compute bias instability from.</figcaption>
+  
+</figure>
+
+<p>Therefore, our X-gyro bias instability is <code>$27.1 deg / hr$</code>.</p>
+<h2 id="conclusion">Conclusion</h2>
+<table>
+<thead>
+<tr>
+<th>FXAS21002 X-Gyro Noise Data</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Angle Random Walk</strong></td>
+<td><code>$1.56 deg / \sqrt{hr}$</code></td>
+</tr>
+<tr>
+<td><strong>Bias Instability</strong></td>
+<td><code>$27.1 deg / hr $</code></td>
+</tr>
+</tbody>
+</table>
+<p>Measuring the noise of gyroscope sensors is a very important step in sensor modelling. Having accurate sensor models will directly influence and significantly affect how accurate a simulation will be. Two very important gyro noise characteristics are angle random walk and bias instability. Allan deviation analyses can be used to determine these characteristics from stationary gyro angle measurements. Both characteristics can be easily interpreted from an Allan deviation plot.</p>
+<p>Thanks for reading!</p>
+
+		</div>
+
+		<div class="post-tags">
+			
+				
+					<nav class="nav tags">
+							<ul class="flat">
+								
+								<li><a href="/tags/sensors">sensors</a></li>
+								
+								<li><a href="/tags/python">python</a></li>
+								
+							</ul>
+					</nav>
+				
+			
+		</div>
+		</div>
+	<div class="footer wrapper">
+	<nav class="nav">
+		<div> Copyright © Michael Wrona 2021 |  Powered by <a href="https://gohugo.io">Hugo</a> and the <a href="https://github.com/vividvilla/ezhil">Ezhil theme</a></div>
+	</nav>
+</div>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-176773333-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script>feather.replace()</script>
+</body>
+</html>
