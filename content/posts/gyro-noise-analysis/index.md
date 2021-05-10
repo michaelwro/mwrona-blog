@@ -101,18 +101,15 @@ N_SAMPLES = int(MEAS_DUR_SEC * FS)  # Number of samples to record
 ser = serial.Serial(SERIAL_PORT, SERIAL_BAUD)
 ser.flush()
 
-n = 0
 with open(OUT_FILE, newline='', mode='w') as csvfile:
     csvwriter = csv.writer(csvfile, delimiter=',')
 
-    while (n < N_SAMPLES):
+    for _ in range(N_SAMPLES):
         # Read serial stream and extract data
         dataList = ser.readline().decode('utf-8').strip('\r\n').split(',')
 
         # Write data to CSV file: gx,gy,gz
         csvwriter.writerow(dataList)
-        
-        n += 1
 ```
 
 ### Download My Data File
