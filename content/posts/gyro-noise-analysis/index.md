@@ -1,6 +1,6 @@
 ---
 title: "Gyro Noise Analysis and Allan Deviation + IMU Example"
-date: "2021-04-27"
+date: "2021-05-9"
 author: Michael Wrona
 draft: false
 tags: ["sensors", "python"]
