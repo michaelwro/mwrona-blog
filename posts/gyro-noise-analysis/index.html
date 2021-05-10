@@ -173,18 +173,15 @@ N_SAMPLES <span style="color:#f92672">=</span> int(MEAS_DUR_SEC <span style="col
 ser <span style="color:#f92672">=</span> serial<span style="color:#f92672">.</span>Serial(SERIAL_PORT, SERIAL_BAUD)
 ser<span style="color:#f92672">.</span>flush()
 
-n <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>
 <span style="color:#66d9ef">with</span> open(OUT_FILE, newline<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;&#39;</span>, mode<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;w&#39;</span>) <span style="color:#66d9ef">as</span> csvfile:
     csvwriter <span style="color:#f92672">=</span> csv<span style="color:#f92672">.</span>writer(csvfile, delimiter<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;,&#39;</span>)
 
-    <span style="color:#66d9ef">while</span> (n <span style="color:#f92672">&lt;</span> N_SAMPLES):
+    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(N_SAMPLES):
         <span style="color:#75715e"># Read serial stream and extract data</span>
         dataList <span style="color:#f92672">=</span> ser<span style="color:#f92672">.</span>readline()<span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#39;utf-8&#39;</span>)<span style="color:#f92672">.</span>strip(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#39;</span>)<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;,&#39;</span>)
 
         <span style="color:#75715e"># Write data to CSV file: gx,gy,gz</span>
         csvwriter<span style="color:#f92672">.</span>writerow(dataList)
-        
-        n <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>
 </code></pre></div><h3 id="download-my-data-file">Download My Data File</h3>
 <p>The resulting CSV file was about 60MB in size. You can download it for yourself <a href="/post-docs/gyro-noise-analysis/gyrodata_100hz_6hrs.csv">at this link</a>.</p>
 <h3 id="allan-deviation-computation">Allan Deviation Computation</h3>
