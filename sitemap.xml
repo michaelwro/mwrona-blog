@@ -93,11 +93,6 @@
   </url>
   
   <url>
-    <loc>https://mwrona.com/about/</loc>
-    <lastmod>2020-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://mwrona.com/tags/computers/</loc>
     <lastmod>2020-08-26T00:00:00+00:00</lastmod>
   </url>
@@ -110,6 +105,11 @@
   <url>
     <loc>https://mwrona.com/posts/first-pc-flip/</loc>
     <lastmod>2020-08-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://mwrona.com/about/</loc>
+    <lastmod>2020-05-12T00:00:00+00:00</lastmod>
   </url>
   
 </urlset>

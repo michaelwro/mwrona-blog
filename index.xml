@@ -67,21 +67,21 @@
     </item>
     
     <item>
-      <title>About the Author</title>
-      <link>https://mwrona.com/about/</link>
-      <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://mwrona.com/about/</guid>
-      <description>Michael Wrona is a recent Aerospace Engineering graduate from Iowa State University with interests in spaceflight, dynamics and control theory, electronics, and programming. During his undergraduate education, he completed two NASA internships, one at the NASA Langley Research Center and another at the NASA Goddard Space Flight Center, in addition to a few undergraduate research assistantships.</description>
-    </item>
-    
-    <item>
       <title>The &#39;Big Dealz&#39; PC Build</title>
       <link>https://mwrona.com/posts/first-pc-flip/</link>
       <pubDate>Wed, 26 Aug 2020 00:00:00 +0000</pubDate>
       
       <guid>https://mwrona.com/posts/first-pc-flip/</guid>
       <description>If you want to get the biggest bang for your buck when building a PC, you&amp;rsquo;re going to have to buy secondhand parts - there&amp;rsquo;s no denying it! Believe me, as someone whose net worth is defined primarily by electronics, you&amp;rsquo;re going to want to squeeze as much value as possible out of your limited cash.</description>
+    </item>
+    
+    <item>
+      <title>About the Author</title>
+      <link>https://mwrona.com/about/</link>
+      <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/about/</guid>
+      <description>Michael Wrona is an Aerospace Engineering graduate from Iowa State University with interests in spaceflight, dynamics and control theory, electronics, and programming. During his undergraduate education, he completed two NASA internships, one at the NASA Langley Research Center and another at the NASA Goddard Space Flight Center, in addition to a few undergraduate research assistantships.</description>
     </item>
     
   </channel>
