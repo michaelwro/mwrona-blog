@@ -112,10 +112,6 @@ with open(OUT_FILE, newline='', mode='w') as csvfile:
         csvwriter.writerow(dataList)
 ```
 
-### Download My Data File
-
-The resulting CSV file was about 60MB in size. You can download it for yourself [at this link](/post-docs/gyro-noise-analysis/gyrodata_100hz_6hrs.csv).
-
 ### Allan Deviation Computation
 
 We will be computing the Allan deviation of gyro angle data in degrees. First, I imported the gyro rate data into numpy arrays. Then, I converted the raw gyro rate data from `$rad/s$` to `$deg/s$`. Next, I Euler integrated the rate data to compute gyro orientation data in `$deg$` by computing the cumulative sum (`numpy.cumsum()`) of the data and multiplying it by the sample period (0.01sec). I then passed the gyro angle data to my Allan deviation function and computed the Allan variance in `$deg/s$`. Finally, I plotted the data on a log-scale plot.
