@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Measuring IMU Noise Density - Michael Wrona&#39;s Blog</title><link rel="icon" type="image/png" href=/favicon.png /><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="Measuring IMU Noise Density" />
+<meta property="og:description" content="Sensor noise is an extremely important characteristic to consider when integrating sensors into a project. Sensor noise distorts underlying signals engineers are interested in, which affects how measurement equipment interprets incoming sensor data. Noisy sensor data makes measuring underlying processes more difficult or near impossible." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://mwrona.com/posts/imu-psd/" />
+<meta property="article:published_time" content="2021-05-15T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-05-15T00:00:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Measuring IMU Noise Density"/>
+<meta name="twitter:description" content="Sensor noise is an extremely important characteristic to consider when integrating sensors into a project. Sensor noise distorts underlying signals engineers are interested in, which affects how measurement equipment interprets incoming sensor data. Noisy sensor data makes measuring underlying processes more difficult or near impossible."/>
+<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,300italic,400italic|Raleway:200,300" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mwrona.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mwrona.com/css/main.css" /><link rel="stylesheet" type="text/css" href="https://mwrona.com/css/dark.css"  />
+	<link rel="stylesheet" type="text/css" href="https://mwrona.com/css/custom-dark.css"  />
+
+	<script src="https://mwrona.com/js/feather.min.js"></script>
+	
+	<script src="https://mwrona.com/js/main.js"></script>
+
+	<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        tags: 'ams'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+	<div class="container wrapper post">
+		<div class="header">
+	<h1 class="site-title"><a href="https://mwrona.com/">Michael Wrona&#39;s Blog</a></h1>
+	<div class="site-description"><h2>Engineering, coding, tech, and other cool projects!</h2><nav class="nav social">
+			<ul class="flat"><a href="https://www.youtube.com/channel/UCIeZzuXHGm7zqSFvT8xGoIQ" title="YouTube: @MicWro Engr" target="_blank" rel="noopener noreferrer"><i data-feather="youtube"></i></a><a href="https://github.com/michaelwro" title="GitHub: @michaelwro" target="_blank" rel="noopener noreferrer"><i data-feather="github"></i></a></ul>
+		</nav>
+	</div>
+
+	<nav class="nav">
+		<ul class="flat">
+			
+			<li>
+				<a href="/">Home</a>
+			</li>
+			
+			<li>
+				<a href="/posts">All Posts</a>
+			</li>
+			
+			<li>
+				<a href="/tags">Post Tags</a>
+			</li>
+			
+			<li>
+				<a href="/about">About</a>
+			</li>
+			
+		</ul>
+	</nav>
+</div>
+
+
+		<div class="post-header">
+			<h1 class="title">Measuring IMU Noise Density</h1>
+			<div class="meta">Posted at &mdash; May 15, 2021</div>
+		</div>
+
+		<div class="markdown">
+			<p>Sensor noise is an extremely important characteristic to consider when integrating sensors into a project. Sensor noise distorts underlying signals engineers are interested in, which affects how measurement equipment interprets incoming sensor data. Noisy sensor data makes measuring underlying processes more difficult or near impossible. Since the inertial measurement unit (IMU) is such an important system in rockets, airplanes, and satellites, not fully  understanding IMU noise can be disaterous!</p>
+<p>The first step in mitigating sensor noise is measuring and characterizing noise. Analyzing sensor noise can give you clues about what types of noise and external phenomena are affecting sensor measurements. Let&rsquo;s use tape cassettes as an example. Tape hiss is the static noise you hear when no music is playing. Audio engineers can measure and characterize the tape hiss and design filters to supress hiss while simultaneously playing music.</p>
+<p>Noise analysis is almost always performed in the frequency domain. We will convert gyro and accelerometer time-series data to the frequency domain through a Fourier transforms. In this post, I&rsquo;ll explain and demonstrate how to generate a frequency domain plot of both accelerometer and gyroscope data, and compute the noise spectral density - with Python code examples!</p>
+<h2 id="generating-the-data">Generating the Data</h2>
+<p>Sensor noise is typically <strong>measured in situ (under normal operating conditions)</strong>. For example, if we want to analyze a Boeing 737 avionics&rsquo; accelerometer noise, we&rsquo;d record accelerometer data while in flight. Also, since sensor noise typically has both low and high frequency components, you should <strong>measure data at a high sample rate</strong>. For simplicity, I will measure my IMU sensor&rsquo;s noise with it completely stationary at 100Hz. I recorded IMU sensor data for eight hours and logged it to a CSV file.</p>
+<p>I used <a href="https://www.adafruit.com/product/3463">Adafruit&rsquo;s Precision NXP 9-DOF IMU</a>, which features the <a href="https://www.nxp.com/docs/en/data-sheet/FXOS8700CQ.pdf">NXP FXOS8700</a> MEMS accelerometer + mangetometer and the <a href="https://www.nxp.com/docs/en/data-sheet/FXAS21002.pdf">NXP FXAS21002</a> MEMS gyroscope.</p>
+<h3 id="load-the-data-file-python">Load the Data File (Python)</h3>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> numpy <span style="color:#f92672">as</span> np
+<span style="color:#f92672">from</span> scipy <span style="color:#f92672">import</span> signal
+<span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#f92672">as</span> plt
+
+DATA_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;accelgyro_still_100hz_6hrs.csv&#39;</span>
+FS <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>  <span style="color:#75715e"># Sample frequency [Hz]</span>
+MEAS_DUR_SEC <span style="color:#f92672">=</span> <span style="color:#ae81ff">28800</span>  <span style="color:#75715e"># (6 hrs) Seconds to record data for</span>
+TS <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> FS  <span style="color:#75715e"># Sample period [s]</span>
+
+<span style="color:#75715e"># Load into arrays, convert units</span>
+dataArr <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>genfromtxt(DATA_FILE, delimiter<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;,&#39;</span>)
+ax <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> <span style="color:#ae81ff">9.80665</span>  <span style="color:#75715e"># m/s/s</span>
+ay <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">1</span>] <span style="color:#f92672">*</span> <span style="color:#ae81ff">9.80665</span>
+az <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">2</span>] <span style="color:#f92672">*</span> <span style="color:#ae81ff">9.80665</span>
+gx <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">3</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)  <span style="color:#75715e"># deg/s</span>
+gy <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">4</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)
+gz <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">5</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)
+</code></pre></div><h2 id="standard-deviation-isnt-sufficient">Standard Deviation Isn&rsquo;t Sufficient</h2>
+<p>Noise standard deviation <code>$\sigma$</code> or variance <code>$\sigma^2$</code> is one way to quantify how noisy our sensor data is. Unfortunately, standard deviation isn&rsquo;t always the best way to measure sensor noise. Some sensors <a href="https://en.wikipedia.org/wiki/Downsampling_(signal_processing)">downsample</a> their data, or take the average of a few readings and output data at a lower rate. If our sensor downsamples, we cannot get an idea of the intrinsic noisiness of our sensor.</p>
+<h2 id="power-spectral-density">Power Spectral Density</h2>
+<dl>
+<dt>A power spectral density plot, or PSD plot, is a graph used to illustrate the variation of signal power with frequency. In other words, it plots signal power density as a function of frequency (<a href="https://youtu.be/Zx0Rl6NaF5g?t=34">source</a>). Here&rsquo;s a way I like to compare variance and power spectral density:</dt>
+<dd>
+<p>The variance of a signal is a time domain parameter. Power spectral density is the frequency domain counterpart of variance. Basically, power spectral density is the Fourier transform of variance (<a href="https://www.researchgate.net/post/what_is_the_relation_between_the_power_spectral_density_and_the_variance_of_the_input_time_series">source</a>).</p>
+</dd>
+</dl>
+<p>A sensor&rsquo;s noise spectral density is simply the power spectral density of the sensor&rsquo;s noise. It is a common metric used to specify how noisy IMUs are. For example, both the FXOS8700 and FXAS21002 datasheets specify a &lsquo;noise density&rsquo; parameter.</p>
+<p>There are many online resources that can explain power spectral density better than I can, so I highly recommend looking it up if you&rsquo;re unfamiliar.</p>
+<h2 id="imu-frequency-domain-fft-analysis">IMU Frequency Domain (FFT) Analysis</h2>
+<p>The <a href="https://en.wikipedia.org/wiki/Fourier_transform">Fourier transform</a> is the primary tool used to analyze noise. Fourier transforms assume that any time-series data can be decomposed into the sum of a bunch of sinusoids, each with a certain frequency and amplitude. Basically, they tell us about the frequency content of a signal and how intense the signal is at a certain frequency. The <a href="https://en.wikipedia.org/wiki/Fast_Fourier_transform">Fast Fourier Transform</a>, or FFT, is an algorithm used to compute a Fourier transform very quickly. Again, there are plenty of resources online that can explain Fourier transfroms better than I can, so if you do not understand them, I highly reccommend looking them up.</p>
+<p><a href="https://numpy.org/">NumPy</a> and <a href="https://www.scipy.org/">SciPy</a> are fantastic Python tools for frequency domain analysis. Let&rsquo;s compute and plot the Fourier transform of our gyro and accelerometer data. For simplicity, I only plotted the X-axis gyro and accelerometer data.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">N <span style="color:#f92672">=</span> len(gx)  <span style="color:#75715e"># Number of elements</span>
+
+<span style="color:#75715e"># Compute FFTs</span>
+freqBins <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>linspace(<span style="color:#ae81ff">0</span>, FS <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>, N <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>)  <span style="color:#75715e"># Freq. labels [Hz]</span>
+fax <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>fft<span style="color:#f92672">.</span>fft(ax)  <span style="color:#75715e"># FFT of accel. data</span>
+fgx <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>fft<span style="color:#f92672">.</span>fft(gx)  <span style="color:#75715e"># FFT of gyro data</span>
+
+<span style="color:#75715e"># Plot x-accel. FFT</span>
+plt<span style="color:#f92672">.</span>figure()
+plt<span style="color:#f92672">.</span>plot(freqBins, (<span style="color:#ae81ff">2</span> <span style="color:#f92672">/</span> N) <span style="color:#f92672">*</span> np<span style="color:#f92672">.</span>abs(fax[:N <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>]))
+plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;FFT of X-Accelerometer Data)</span>
+plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;Frequency [Hz]&#39;</span>)
+plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Amplitude&#39;</span>)
+plt<span style="color:#f92672">.</span>grid()
+
+<span style="color:#75715e"># Plot x-gyro. FFT</span>
+plt<span style="color:#f92672">.</span>figure()
+plt<span style="color:#f92672">.</span>plot(freqBins, (<span style="color:#ae81ff">2</span> <span style="color:#f92672">/</span> N) <span style="color:#f92672">*</span> np<span style="color:#f92672">.</span>abs(fgx[:N <span style="color:#f92672">//</span> <span style="color:#ae81ff">2</span>]))
+plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;FFT of X-Gyroscope Data)</span>
+plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;Frequency [Hz]&#39;</span>)
+plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Amplitude&#39;</span>)
+plt<span style="color:#f92672">.</span>grid()
+plt<span style="color:#f92672">.</span>show()
+</code></pre></div>
+<figure class="center" >
+  <a href="/post-imgs/imu-psd/xaccel-fft.png" target="_blank">
+    <img src="/post-imgs/imu-psd/xaccel-fft.png"  alt="X-accelerometer FFT"   width="600px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >X-Accelerometer FFT</figcaption>
+  
+</figure>
+
+
+<figure class="center" >
+  <a href="/post-imgs/imu-psd/xgyro-fft.png" target="_blank">
+    <img src="/post-imgs/imu-psd/xgyro-fft.png"  alt="X-gyroscope FFT"   width="600px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >X-Gyro FFT</figcaption>
+  
+</figure>
+
+<p>Note that the FFT only goes up to 50Hz, which is the <a href="https://en.wikipedia.org/wiki/Nyquist_frequency">Nyquist frequency</a> for a sample rate of 100Hz. The gyro FFT is relatively flat, while the accelerometer FFT shows some sharp peaks. I recorded data with my IMU on a shelf below my PC. The peak at 17Hz is equal to 1020RPM, which is the average RPM of my PC&rsquo;s CPU fan. I would never know that the IMU was picking up vibrations from my PC without a frequency domain plot. That is the power of Fourier transforms and frequency domain analysis! I&rsquo;m still not sure what the large peak at about 47Hz is, though. It only shows up in the accelerometer data, which is kinda sus&hellip;</p>
+<h2 id="imu-noise-density">IMU Noise Density</h2>
+<p>Computing the noise density of our IMU data is a bit more complex. We will use SciPy&rsquo;s <code>signal.welch()</code> function to compute the power spectral density. The <code>signal.welch()</code> algorithm outputs PSD in units of <code>$(units)^2 / Hz$</code>. On the other hand, accelerometer and gyro datasheets typically give noise spectral density in units of <code>$\mu g / \sqrt{Hz}$</code> and <code>$dps / \sqrt{Hz}$</code>, respectively (dps = degrees per second). Noise density is in units of <code>$(units) / \sqrt{Hz}$</code>. Therefore, I took the square root of the <code>signal.welch()</code> result to compute noise density.</p>
+<p>Then, in order to compute noise density, we can take the average of the noise density across all frequencies.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#75715e"># Conversion factor: m/s/s -&gt; ug (micro G&#39;s)</span>
+accel2ug <span style="color:#f92672">=</span> <span style="color:#ae81ff">1e6</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">9.80665</span>
+
+<span style="color:#75715e"># Compute PSD via Welch algorithm</span>
+freqax, psdax <span style="color:#f92672">=</span> signal<span style="color:#f92672">.</span>welch(ax, FS, nperseg<span style="color:#f92672">=</span><span style="color:#ae81ff">1024</span>, scaling<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;density&#39;</span>)  <span style="color:#75715e"># ax</span>
+freqay, psday <span style="color:#f92672">=</span> signal<span style="color:#f92672">.</span>welch(ay, FS, nperseg<span style="color:#f92672">=</span><span style="color:#ae81ff">1024</span>, scaling<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;density&#39;</span>)  <span style="color:#75715e"># ay</span>
+freqaz, psdaz <span style="color:#f92672">=</span> signal<span style="color:#f92672">.</span>welch(az, FS, nperseg<span style="color:#f92672">=</span><span style="color:#ae81ff">1024</span>, scaling<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;density&#39;</span>)  <span style="color:#75715e"># az</span>
+
+freqgx, psdgx <span style="color:#f92672">=</span> signal<span style="color:#f92672">.</span>welch(gx, FS, nperseg<span style="color:#f92672">=</span><span style="color:#ae81ff">1024</span>, scaling<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;density&#39;</span>)  <span style="color:#75715e"># gx</span>
+freqgy, psdgy <span style="color:#f92672">=</span> signal<span style="color:#f92672">.</span>welch(gy, FS, nperseg<span style="color:#f92672">=</span><span style="color:#ae81ff">1024</span>, scaling<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;density&#39;</span>)  <span style="color:#75715e"># gy</span>
+freqgz, psdgz <span style="color:#f92672">=</span> signal<span style="color:#f92672">.</span>welch(gz, FS, nperseg<span style="color:#f92672">=</span><span style="color:#ae81ff">1024</span>, scaling<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;density&#39;</span>)  <span style="color:#75715e"># gz</span>
+
+<span style="color:#75715e"># Convert to [ug / sqrt(Hz)]</span>
+psdax <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>sqrt(psdax) <span style="color:#f92672">*</span> accel2ug
+psday <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>sqrt(psday) <span style="color:#f92672">*</span> accel2ug
+psdaz <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>sqrt(psdaz) <span style="color:#f92672">*</span> accel2ug
+
+psdgx <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>sqrt(psdgx)
+psdgy <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>sqrt(psdgy)
+psdgz <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>sqrt(psdgz)
+
+<span style="color:#75715e"># Compute noise spectral densities</span>
+ndax <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>mean(psdax)
+nday <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>mean(psday)
+ndaz <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>mean(psdaz)
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;AX Noise Density: </span><span style="color:#e6db74">%f</span><span style="color:#e6db74"> ug/sqrt(Hz)&#39;</span> <span style="color:#f92672">%</span> (ndax))
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;AY Noise Density: </span><span style="color:#e6db74">%f</span><span style="color:#e6db74"> ug/sqrt(Hz)&#39;</span> <span style="color:#f92672">%</span> (nday))
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;AZ Noise Density: </span><span style="color:#e6db74">%f</span><span style="color:#e6db74"> ug/sqrt(Hz)&#39;</span> <span style="color:#f92672">%</span> (ndaz))
+
+ndgx <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>mean(psdgx)
+ndgy <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>mean(psdgy)
+ndgz <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>mean(psdgz)
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;GX Noise Density: </span><span style="color:#e6db74">%f</span><span style="color:#e6db74"> dps/sqrt(Hz)&#39;</span> <span style="color:#f92672">%</span> (ndgx))
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;GY Noise Density: </span><span style="color:#e6db74">%f</span><span style="color:#e6db74"> dps/sqrt(Hz)&#39;</span> <span style="color:#f92672">%</span> (ndgy))
+<span style="color:#66d9ef">print</span>(<span style="color:#e6db74">&#39;GZ Noise Density: </span><span style="color:#e6db74">%f</span><span style="color:#e6db74"> dps/sqrt(Hz)&#39;</span> <span style="color:#f92672">%</span> (ndgz))
+
+
+<span style="color:#75715e"># Plot accel. data</span>
+plt<span style="color:#f92672">.</span>figure()
+plt<span style="color:#f92672">.</span>plot(freqax, psdax, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ax&#39;</span>)
+plt<span style="color:#f92672">.</span>plot(freqay, psday, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ay&#39;</span>)
+plt<span style="color:#f92672">.</span>plot(freqaz, psdaz, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;az&#39;</span>)
+plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Accelerometer Power Spectral Density&#39;</span>)
+plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;Frequency [Hz]&#39;</span>)
+plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">r</span><span style="color:#e6db74">&#39;Spectral Density  $\mu g / \sqrt{Hz}$&#39;</span>)
+plt<span style="color:#f92672">.</span>legend()
+plt<span style="color:#f92672">.</span>grid()
+
+<span style="color:#75715e"># Plot gyro data</span>
+plt<span style="color:#f92672">.</span>figure()
+plt<span style="color:#f92672">.</span>plot(freqgx, psdgx, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gx&#39;</span>)
+plt<span style="color:#f92672">.</span>plot(freqgy, psdgy, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gy&#39;</span>)
+plt<span style="color:#f92672">.</span>plot(freqgz, psdgz, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gz&#39;</span>)
+plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Gyro Noise Spectral Density&#39;</span>)
+plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">&#39;Frequency [Hz]&#39;</span>)
+plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">r</span><span style="color:#e6db74">&#39;Spectral Density  $dps / \sqrt{Hz}$&#39;</span>)
+plt<span style="color:#f92672">.</span>legend()
+plt<span style="color:#f92672">.</span>grid()
+plt<span style="color:#f92672">.</span>show()
+</code></pre></div>
+<figure class="center" >
+  <a href="/post-imgs/imu-psd/xaccel-psd.png" target="_blank">
+    <img src="/post-imgs/imu-psd/xaccel-psd.png"  alt="X-accelerometer PSD"   width="600px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >X-Accelerometer PSD</figcaption>
+  
+</figure>
+
+
+<figure class="center" >
+  <a href="/post-imgs/imu-psd/xgyro-psd.png" target="_blank">
+    <img src="/post-imgs/imu-psd/xgyro-psd.png"  alt="X-gyroscope FFT"   width="600px"   style="border-radius: 8px;"  />
+  </a>
+  
+    <figcaption class="center" >X-Gyro PSD</figcaption>
+  
+</figure>
+
+<h3 id="fxos8700-accelerometer">FXOS8700 Accelerometer</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Accelerometer Axis</th>
+<th align="right">Noise Density <code>$\mu g / \sqrt{Hz}$</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">AX</td>
+<td align="right">191.982827</td>
+</tr>
+<tr>
+<td align="left">AY</td>
+<td align="right">221.099756</td>
+</tr>
+<tr>
+<td align="left">AZ</td>
+<td align="right">272.502801</td>
+</tr>
+</tbody>
+</table>
+<p>The FXOS8700 datasheet specified a noise density of 126 <code>$\mu g / \sqrt{Hz}$</code>, which is a bit off from our measurements. This could be due to the sharp peaks in the accelerometer data. If we computed the average without including the peaks, I&rsquo;m sure it would be closer to the datasheet value.</p>
+<h3 id="fxas21002-gyroscope">FXAS21002 Gyroscope</h3>
+<table>
+<thead>
+<tr>
+<th align="left">Gyroscope Axis</th>
+<th align="right">Noise Density <code>$dps / \sqrt{Hz}$</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">GX</td>
+<td align="right">0.029333</td>
+</tr>
+<tr>
+<td align="left">GY</td>
+<td align="right">0.021520</td>
+</tr>
+<tr>
+<td align="left">GZ</td>
+<td align="right">0.019020</td>
+</tr>
+</tbody>
+</table>
+<p>The FXAS21002 datasheet specified a noise density of 0.025 <code>$dps / \sqrt{Hz}$</code>, which is very close to our measurements.</p>
+
+		</div>
+
+		<div class="post-tags">
+			
+				
+					<nav class="nav tags">
+							<ul class="flat">
+								
+								<li><a href="/tags/sensors">sensors</a></li>
+								
+							</ul>
+					</nav>
+				
+			
+		</div>
+		</div>
+	<div class="footer wrapper">
+	<nav class="nav">
+		<div> Copyright © Michael Wrona 2021 |  Powered by <a href="https://gohugo.io">Hugo</a> and the <a href="https://github.com/vividvilla/ezhil">Ezhil theme</a></div>
+	</nav>
+</div>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-176773333-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script>feather.replace()</script>
+</body>
+</html>

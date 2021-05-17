@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © Michael Wrona 2021</copyright>
-    <lastBuildDate>Sun, 09 May 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 15 May 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://mwrona.com/tags/sensors/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Measuring IMU Noise Density</title>
+      <link>https://mwrona.com/posts/imu-psd/</link>
+      <pubDate>Sat, 15 May 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/posts/imu-psd/</guid>
+      <description>Sensor noise is an extremely important characteristic to consider when integrating sensors into a project. Sensor noise distorts underlying signals engineers are interested in, which affects how measurement equipment interprets incoming sensor data. Noisy sensor data makes measuring underlying processes more difficult or near impossible.</description>
+    </item>
     
     <item>
       <title>Gyro Noise and Allan Deviation &#43; IMU Example</title>
