@@ -18,7 +18,7 @@
       <pubDate>Sat, 15 May 2021 00:00:00 +0000</pubDate>
       
       <guid>https://mwrona.com/posts/imu-psd/</guid>
-      <description>Sensor noise is an extremely important characteristic to consider when integrating sensors into a project. Sensor noise distorts underlying signals engineers are interested in, which affects how measurement equipment interprets incoming sensor data. Noisy sensor data makes measuring underlying processes more difficult or near impossible.</description>
+      <description>Sensor noise is an extremely important characteristic to consider when integrating sensors into a project. Sensor noise distorts underlying signals engineers are interested in, which makes measuring underlying processes more difficult or near impossible. Since the inertial measurement unit (IMU) is such an important system in rockets, airplanes, and satellites, not fully understanding IMU noise can be disaterous!</description>
     </item>
     
     <item>
