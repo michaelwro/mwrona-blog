@@ -254,4 +254,4 @@ FXAS21002 X-Gyro Noise Data
 
 Measuring the noise of gyroscope sensors is a very important step in sensor modelling. Having accurate sensor models will directly influence and significantly affect how accurate a simulation will be. Two very important gyro noise characteristics are angle random walk and bias instability. Allan deviation analyses can be used to determine these characteristics from stationary gyro angle measurements. Both characteristics can be easily interpreted from an Allan deviation plot.
 
-Thanks for reading!
+Thanks so much for reading!
