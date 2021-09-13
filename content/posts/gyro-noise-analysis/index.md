@@ -236,7 +236,6 @@ Therefore, our X-gyro angle random walk is `$1.56 deg/\sqrt{hr}$`.
 
 Computing bias instability is a bit trickier. As we can see in the Allan deviation plot, the data reaches a minimum before increasing again. First, determine the Allan deviation at this minimum point in `$deg/s$`. For my X-gyro data, this point was at `$\tau=129.1s$` and the deviation was `$0.005 deg/s$`. Then, we divide this value by 0.664 and multiply the result by 3600. This yields bias instability in `$deg/hr$`. The 0.664 is a dimensionless value specified in [IEEE Standard 952-1997](https://ieeexplore.ieee.org/document/660628) and is a constant in some icky math equation.
 
-
 `$$ BI = 0.005 \frac{deg}{s} * \frac{1}{0.664} * 3600\frac{s}{hr} $$`
 
 `$$ BI = 27.1 deg / hr $$`
