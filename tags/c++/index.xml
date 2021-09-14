@@ -7,10 +7,19 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © Michael Wrona 2021</copyright>
-    <lastBuildDate>Mon, 07 Sep 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 14 Sep 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://mwrona.com/tags/c++/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>A Simple C&#43;&#43; Vector Class</title>
+      <link>https://mwrona.com/posts/cpp-vector-obj/</link>
+      <pubDate>Tue, 14 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/posts/cpp-vector-obj/</guid>
+      <description>Introduction Learning how to use arrays in C++ is an extremely important skill to have as a programmer. Generally speacking, arrays are used to store data with identical types as a group. The simplest and most commonly used array is a vector, or 1D array.</description>
+    </item>
     
     <item>
       <title>Read Serial Data From Spektrum Remote Receiver</title>

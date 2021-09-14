@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>A Simple C&#43;&#43; Vector Class - Michael Wrona&#39;s Blog</title><link rel="icon" type="image/png" href=/favicon.png /><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="A Simple C&#43;&#43; Vector Class" />
+<meta property="og:description" content="Introduction Learning how to use arrays in C&#43;&#43; is an extremely important skill to have as a programmer. Generally speacking, arrays are used to store data with identical types as a group. The simplest and most commonly used array is a vector, or 1D array." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://mwrona.com/posts/cpp-vector-obj/" />
+<meta property="article:published_time" content="2021-09-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-09-14T00:00:00+00:00" />
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="A Simple C&#43;&#43; Vector Class"/>
+<meta name="twitter:description" content="Introduction Learning how to use arrays in C&#43;&#43; is an extremely important skill to have as a programmer. Generally speacking, arrays are used to store data with identical types as a group. The simplest and most commonly used array is a vector, or 1D array."/>
+<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,300italic,400italic|Raleway:200,300" rel="stylesheet">
+
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mwrona.com/css/normalize.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://mwrona.com/css/main.css" /><link rel="stylesheet" type="text/css" href="https://mwrona.com/css/dark.css"  />
+	<link rel="stylesheet" type="text/css" href="https://mwrona.com/css/custom-dark.css"  />
+
+	<script src="https://mwrona.com/js/feather.min.js"></script>
+	
+	<script src="https://mwrona.com/js/main.js"></script>
+
+	<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$','$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        tags: 'ams'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  
+    window.addEventListener('load', (event) => {
+        document.querySelectorAll("mjx-container").forEach(function(x){
+          x.parentElement.classList += 'has-jax'})
+      });
+  
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+	<div class="container wrapper post">
+		<div class="header">
+	<h1 class="site-title"><a href="https://mwrona.com/">Michael Wrona&#39;s Blog</a></h1>
+	<div class="site-description"><h2>Engineering, coding, tech, and other cool projects!</h2><nav class="nav social">
+			<ul class="flat"><a href="https://www.youtube.com/channel/UCIeZzuXHGm7zqSFvT8xGoIQ" title="YouTube: @MicWro Engr" target="_blank" rel="noopener noreferrer"><i data-feather="youtube"></i></a><a href="https://github.com/michaelwro" title="GitHub: @michaelwro" target="_blank" rel="noopener noreferrer"><i data-feather="github"></i></a></ul>
+		</nav>
+	</div>
+
+	<nav class="nav">
+		<ul class="flat">
+			
+			<li>
+				<a href="/">Home</a>
+			</li>
+			
+			<li>
+				<a href="/posts">All Posts</a>
+			</li>
+			
+			<li>
+				<a href="/tags">Post Tags</a>
+			</li>
+			
+			<li>
+				<a href="/about">About</a>
+			</li>
+			
+		</ul>
+	</nav>
+</div>
+
+
+		<div class="post-header">
+			<h1 class="title">A Simple C&#43;&#43; Vector Class</h1>
+			<div class="meta">Posted at &mdash; Sep 14, 2021</div>
+		</div>
+
+		<div class="markdown">
+			<h2 id="introduction">Introduction</h2>
+<p>Learning how to use <a href="https://www.cplusplus.com/doc/tutorial/arrays/">arrays in C++</a> is an extremely important skill to have as a programmer. Generally speacking, arrays are used to store data with identical types as a group. The simplest and most commonly used array is a <a href="https://en.wikipedia.org/wiki/Vector">vector</a>, or 1D array. Creating, deallocating, and keeping track of array lengths can complicate programming. The C++ standard library has a very good implementation of a <a href="https://en.cppreference.com/w/cpp/container/vector">vector object</a>, is somewhat bloated and complex for applications with tight memory requirements. <code>std::vector</code> is also a template, which aren&rsquo;t a great idea in critical applications. Therefore, here is a simplified vector class for creating and managing vectors.</p>
+<p>Full source code for my vector class can be found on my <a href="https://github.com/michaelwro/simple-vectorf">GitHub repo</a>.</p>
+<h2 id="functionality">Functionality</h2>
+<p>My vector class has the following capabilities:</p>
+<ul>
+<li>Create/allocate the vector in memory with a fixed size</li>
+<li>Return the length (number of elements)</li>
+<li>Return elements of the vector</li>
+<li>Fill the vector with a constant</li>
+<li>Return the magnitude/norm</li>
+<li>Deallocate the vector</li>
+</ul>
+<p>I will create a <code>float</code> vector class, but the code could be easily modifed by replacing <code>float</code> with <code>double</code>, <code>uint32_t</code>, etc.</p>
+<h2 id="vector-class-declaration">Vector Class Declaration</h2>
+<p>The vector class is declared in it&rsquo;s header file. This defines the constructors, deconstructor, methods, and access specifiers for each method and variable.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Vectorf</span> {
+    <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+        Vectorf(size_t vecLen <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>);  <span style="color:#75715e">// constructor
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">virtual</span> <span style="color:#f92672">~</span>Vectorf();  <span style="color:#75715e">// deconstructor
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Fill</span>(<span style="color:#66d9ef">float</span> val);
+        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Print</span>();
+        size_t <span style="color:#a6e22e">GetLen</span>();
+        <span style="color:#66d9ef">float</span> <span style="color:#a6e22e">Get</span>(size_t index);
+        <span style="color:#66d9ef">float</span> <span style="color:#a6e22e">GetNorm</span>();
+    <span style="color:#66d9ef">protected</span><span style="color:#f92672">:</span>
+    <span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+        size_t n; <span style="color:#75715e">///&lt; Vector length
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">float</span> <span style="color:#f92672">*</span>vec;  <span style="color:#75715e">///&lt; Vector&#39;s dynamic array
+</span><span style="color:#75715e"></span>};
+</code></pre></div><h2 id="constructor---creating-the-vector">Constructor - Creating the Vector</h2>
+<p>The constructor is called when we create a vector object. The input when creating a vector object will be it&rsquo;s length, or the number of elements. The constructor then allocates the vector&rsquo;s array in heap memory with the <code>new</code> keyword. We have to use dynamic arrays since the array size is unknown until runtime. I added some error checks, too.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Create a float vector object.
+</span><span style="color:#75715e"> *
+</span><span style="color:#75715e"> * @param vecLen Length of vector, number of elements in the array. Default 3.
+</span><span style="color:#75715e"> */</span>
+Vectorf<span style="color:#f92672">::</span>Vectorf(size_t vecLen) {
+
+    <span style="color:#75715e">// Check if len is zero
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (vecLen <span style="color:#f92672">==</span> (size_t)<span style="color:#ae81ff">0</span>) {
+        <span style="color:#66d9ef">throw</span> std<span style="color:#f92672">::</span>invalid_argument(<span style="color:#e6db74">&#34;Vector length must be greater than zero&#34;</span>);
+    }
+
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n <span style="color:#f92672">=</span> vecLen;  <span style="color:#75715e">// vector length
+</span><span style="color:#75715e"></span>
+    <span style="color:#75715e">// check for bad allocation
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">try</span> {
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">float</span>[<span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n];  <span style="color:#75715e">// Allocate array on the heap
+</span><span style="color:#75715e"></span>    }
+    <span style="color:#66d9ef">catch</span> (<span style="color:#66d9ef">const</span> std<span style="color:#f92672">::</span>bad_alloc <span style="color:#f92672">&amp;</span>ba) {
+        std<span style="color:#f92672">::</span>cerr <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;Bad vectorf array allocation: &#34;</span> <span style="color:#f92672">&lt;&lt;</span> ba.what() <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>endl;
+    }
+
+    <span style="color:#75715e">// Set initial values to zero
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>Fill(<span style="color:#ae81ff">0.0f</span>);
+}
+</code></pre></div><h2 id="return-the-length">Return the Length</h2>
+<p>The following method returns the vector length, or the number of elements in the vector&rsquo;s array. This could be used in external code when the length of a vector is unknown.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Return the length of the vector.
+</span><span style="color:#75715e"> * 
+</span><span style="color:#75715e"> * @returns Number of elements in the vector&#39;s array.
+</span><span style="color:#75715e"> */</span>
+size_t Vectorf<span style="color:#f92672">::</span>GetLen() {
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n;
+}
+</code></pre></div><h2 id="get-a-value">Get a Value</h2>
+<p>The <code>Get()</code> method returns the vector&rsquo;s value at the specified index. It also ensures the specified index is less than the vector&rsquo;s length.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Return the vector&#39;s value at the specified index.
+</span><span style="color:#75715e"> * 
+</span><span style="color:#75715e"> * @param index Array index.
+</span><span style="color:#75715e"> * @returns Value at the specified index.
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">float</span> Vectorf<span style="color:#f92672">::</span>Get(size_t index) {
+
+    <span style="color:#75715e">// check the specified index
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n) {
+        <span style="color:#66d9ef">throw</span> std<span style="color:#f92672">::</span>invalid_argument(<span style="color:#e6db74">&#34;Vector index exceeded length.&#34;</span>);
+        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0.0f</span>;
+    }
+
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[index];
+}
+</code></pre></div><h2 id="fill-the-vector">Fill the Vector</h2>
+<p>The <code>fill()</code> method fills the entire array with a specified value. This method is also used in the constructor to initialize the vector with all zeros.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Fill the entire vector with a specified value.
+</span><span style="color:#75715e"> * 
+</span><span style="color:#75715e"> * @param val Value to fill the array with.
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">void</span> Vectorf<span style="color:#f92672">::</span>Fill(<span style="color:#66d9ef">float</span> val) {
+
+    size_t i;
+
+    <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; i<span style="color:#f92672">++</span>) {
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[i] <span style="color:#f92672">=</span> val;
+    }
+}
+</code></pre></div><h2 id="compute-vector-magnitude">Compute Vector Magnitude</h2>
+<p>The <code>GetNorm()</code> method computes the magnitude, or norm, of the vector. The mangitude is the square root of the sum of of the vector elements, squared.</p>
+<p>$$ norm = \sqrt{x_0^2 + x_1^2 + x_2^2 + &hellip;} $$</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Return the magnitude/norm of the vector.
+</span><span style="color:#75715e"> * 
+</span><span style="color:#75715e"> * @returns Vector magnitude (2-norm).
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">float</span> Vectorf<span style="color:#f92672">::</span>GetNorm() {
+    size_t i;
+    <span style="color:#66d9ef">float</span> sum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0f</span>;
+
+    <span style="color:#75715e">// Sum of the squares
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; i<span style="color:#f92672">++</span>)
+        sum <span style="color:#f92672">+=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[i] <span style="color:#f92672">*</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[i];
+
+    <span style="color:#75715e">// return the square root
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">sqrtf</span>(sum);
+}
+</code></pre></div><h2 id="print-the-vector">Print the Vector</h2>
+<p>The <code>Print()</code> method prints the entire vector to the console. This could be useful for debugging purposes.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Print the vector&#39;s elements to stdout.
+</span><span style="color:#75715e"> */</span>
+<span style="color:#66d9ef">void</span> Vectorf<span style="color:#f92672">::</span>Print() {
+    size_t i;
+
+    std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;[ &#34;</span>;  <span style="color:#75715e">// Left bracket
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; i<span style="color:#f92672">++</span>)
+        std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[i] <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34; &#34;</span>;  <span style="color:#75715e">// space between elements
+</span><span style="color:#75715e"></span>    std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;]&#34;</span> <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>endl;  <span style="color:#75715e">// right bracket
+</span><span style="color:#75715e"></span>}
+</code></pre></div><h2 id="deconstructor---deallocate-arrays">Deconstructor - Deallocate Arrays</h2>
+<p>The deconstructor deallocates the vector&rsquo;s array after it goes out of scope. This is important so that the computer can use the array&rsquo;s memory locations after the vector is out of scope.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#75715e">/**
+</span><span style="color:#75715e"> * Deconstructor for vectorf object.
+</span><span style="color:#75715e"> */</span>
+Vectorf<span style="color:#f92672">::~</span>Vectorf() {
+    <span style="color:#66d9ef">delete</span>[] <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec; <span style="color:#75715e">// deallocate from the heap
+</span><span style="color:#75715e"></span>}
+</code></pre></div><p>The source code plus an example can be found at <a href="https://github.com/michaelwro/simple-vectorf">this GitHub repo</a>. I hope this was useful and gave you some inspiration for your C++ projects!</p>
+
+		</div>
+
+		<div class="post-tags">
+			
+				
+					<nav class="nav tags">
+							<ul class="flat">
+								
+								<li><a href="/tags/coding">coding</a></li>
+								
+								<li><a href="/tags/c&#43;&#43;">c&#43;&#43;</a></li>
+								
+							</ul>
+					</nav>
+				
+			
+		</div>
+		</div>
+	<div class="footer wrapper">
+	<nav class="nav">
+		<div> Copyright © Michael Wrona 2021 |  Powered by <a href="https://gohugo.io">Hugo</a> and the <a href="https://github.com/vividvilla/ezhil">Ezhil theme</a></div>
+	</nav>
+</div>
+
+
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-176773333-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+<script>feather.replace()</script>
+</body>
+</html>

@@ -7,10 +7,28 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright © Michael Wrona 2021</copyright>
-    <lastBuildDate>Sat, 15 May 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 14 Sep 2021 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://mwrona.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>c&#43;&#43;</title>
+      <link>https://mwrona.com/tags/c&#43;&#43;/</link>
+      <pubDate>Tue, 14 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/tags/c&#43;&#43;/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>coding</title>
+      <link>https://mwrona.com/tags/coding/</link>
+      <pubDate>Tue, 14 Sep 2021 00:00:00 +0000</pubDate>
+      
+      <guid>https://mwrona.com/tags/coding/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>sensors</title>
@@ -40,15 +58,6 @@
     </item>
     
     <item>
-      <title>coding</title>
-      <link>https://mwrona.com/tags/coding/</link>
-      <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://mwrona.com/tags/coding/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>numerical methods</title>
       <link>https://mwrona.com/tags/numerical-methods/</link>
       <pubDate>Thu, 10 Dec 2020 00:00:00 +0000</pubDate>
@@ -63,15 +72,6 @@
       <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
       
       <guid>https://mwrona.com/tags/arduino/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>c&#43;&#43;</title>
-      <link>https://mwrona.com/tags/c&#43;&#43;/</link>
-      <pubDate>Mon, 07 Sep 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://mwrona.com/tags/c&#43;&#43;/</guid>
       <description></description>
     </item>
     
