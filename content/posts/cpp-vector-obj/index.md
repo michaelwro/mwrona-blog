@@ -8,7 +8,7 @@ tags: ["coding", "c++"]
 
 ## Introduction
 
-Learning how to use [arrays in C++](https://www.cplusplus.com/doc/tutorial/arrays/) is an extremely important skill to have as a programmer. Generally speacking, arrays are used to store data with identical types as a group. The simplest and most commonly used array is a [vector](https://en.wikipedia.org/wiki/Vector), or 1D array. Creating, deallocating, and keeping track of array lengths can complicate programming. The C++ standard library has a very good implementation of a [vector object](https://en.cppreference.com/w/cpp/container/vector), is somewhat bloated and complex for applications with tight memory requirements. `std::vector` is also a template, which aren't a great idea in critical applications. Therefore, here is a simplified vector class for creating and managing vectors.
+Learning how to use [arrays in C++](https://www.cplusplus.com/doc/tutorial/arrays/) is an extremely important skill to have as a programmer. Generally speaking, arrays are used to store data with identical types as a group. The simplest and most commonly used array is a [vector](https://en.wikipedia.org/wiki/Vector), or 1D array. Creating, deallocating, and keeping track of array lengths can complicate programming. The C++ standard library has a very good implementation of a [vector object](https://en.cppreference.com/w/cpp/container/vector), but is somewhat bloated for applications with tight memory requirements. `std::vector` is also a template, which aren't kosher in embedded and critical applications. Therefore, here is a simplified vector class for creating and managing vectors that I created.
 
 Full source code for my vector class can be found on my [GitHub repo](https://github.com/michaelwro/simple-vectorf).
 
@@ -27,7 +27,7 @@ I will create a `float` vector class, but the code could be easily modifed by re
 
 ## Vector Class Declaration
 
-The vector class is declared in it's header file. This defines the constructors, deconstructor, methods, and access specifiers for each method and variable.
+The vector class is declared in it's header file. This defines the constructor, deconstructor, methods, and access specifiers for each method and variable.
 
 ```cpp
 class Vectorf {
@@ -51,13 +51,7 @@ class Vectorf {
 The constructor is called when we create a vector object. The input when creating a vector object will be it's length, or the number of elements. The constructor then allocates the vector's array in heap memory with the `new` keyword. We have to use dynamic arrays since the array size is unknown until runtime. I added some error checks, too.
 
 ```cpp
-/**
- * Create a float vector object.
- *
- * @param vecLen Length of vector, number of elements in the array. Default 3.
- */
 Vectorf::Vectorf(size_t vecLen) {
-
     // Check if len is zero
     if (vecLen == (size_t)0) {
         throw std::invalid_argument("Vector length must be greater than zero");
@@ -83,11 +77,6 @@ Vectorf::Vectorf(size_t vecLen) {
 The following method returns the vector length, or the number of elements in the vector's array. This could be used in external code when the length of a vector is unknown.
 
 ```cpp
-/**
- * Return the length of the vector.
- * 
- * @returns Number of elements in the vector's array.
- */
 size_t Vectorf::GetLen() {
     return this->n;
 }
@@ -98,18 +87,11 @@ size_t Vectorf::GetLen() {
 The `Get()` method returns the vector's value at the specified index. It also ensures the specified index is less than the vector's length.
 
 ```cpp
-/**
- * Return the vector's value at the specified index.
- * 
- * @param index Array index.
- * @returns Value at the specified index.
- */
 float Vectorf::Get(size_t index) {
-
     // check the specified index
     if (index > this->n) {
         throw std::invalid_argument("Vector index exceeded length.");
-        return 0.0f;
+        return 0.0f;  // just in case
     }
 
     return this->vec[index];
@@ -122,13 +104,7 @@ float Vectorf::Get(size_t index) {
 The `fill()` method fills the entire array with a specified value. This method is also used in the constructor to initialize the vector with all zeros.
 
 ```cpp
-/**
- * Fill the entire vector with a specified value.
- * 
- * @param val Value to fill the array with.
- */
 void Vectorf::Fill(float val) {
-
     size_t i;
 
     for (i = 0; i < this->n; i++) {
@@ -144,11 +120,6 @@ The `GetNorm()` method computes the magnitude, or norm, of the vector. The mangi
 $$ norm = \sqrt{x_0^2 + x_1^2 + x_2^2 + ...} $$
 
 ```cpp
-/**
- * Return the magnitude/norm of the vector.
- * 
- * @returns Vector magnitude (2-norm).
- */
 float Vectorf::GetNorm() {
     size_t i;
     float sum = 0.0f;
@@ -167,9 +138,6 @@ float Vectorf::GetNorm() {
 The `Print()` method prints the entire vector to the console. This could be useful for debugging purposes.
 
 ```cpp
-/**
- * Print the vector's elements to stdout.
- */
 void Vectorf::Print() {
     size_t i;
 
@@ -185,9 +153,6 @@ void Vectorf::Print() {
 The deconstructor deallocates the vector's array after it goes out of scope. This is important so that the computer can use the array's memory locations after the vector is out of scope.
 
 ```cpp
-/**
- * Deconstructor for vectorf object.
- */
 Vectorf::~Vectorf() {
     delete[] this->vec; // deallocate from the heap
 }
