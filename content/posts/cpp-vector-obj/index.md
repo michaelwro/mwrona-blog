@@ -32,8 +32,8 @@ The vector class is declared in it's header file. This defines the constructor, 
 ```cpp
 class Vectorf {
     public:
-        Vectorf(size_t vecLen = 3);  // constructor
-        virtual ~Vectorf();  // deconstructor
+        Vectorf(size_t vecLen = 3);
+        ~Vectorf();
         void Fill(float val);
         void Print();
         size_t GetLen();
