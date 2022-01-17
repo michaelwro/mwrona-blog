@@ -6,9 +6,10 @@
 	<meta property="og:title" content="Gyro Noise and Allan Deviation &#43; IMU Example" />
 <meta property="og:description" content="Rate gyros measure angular rotation rate, or angular velocity, in units of degrees per second [deg/s] or radians per second [rad/s]. Gyros are used across many diverse applications. Since I come from an aerospace background, I know that gyros are extremely important sensors in rockets, satellies, missiles, and airplane autopilots." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://mwrona.com/posts/gyro-noise-analysis/" />
+<meta property="og:url" content="https://mwrona.com/posts/gyro-noise-analysis/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-05-09T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-05-09T00:00:00+00:00" />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Gyro Noise and Allan Deviation &#43; IMU Example"/>
 <meta name="twitter:description" content="Rate gyros measure angular rotation rate, or angular velocity, in units of degrees per second [deg/s] or radians per second [rad/s]. Gyros are used across many diverse applications. Since I come from an aerospace background, I know that gyros are extremely important sensors in rockets, satellies, missiles, and airplane autopilots."/>
@@ -140,7 +141,7 @@
 <h3 id="data-collection">Data Collection</h3>
 <p>Since we are measuring the long-term stability of a gyro, we will need to collect data for a long time. I recorded <strong>stationary</strong> gyro data at 100Hz for 6 hours. I wrote some Arduino code to read the I2C sensor and print data over a serial connection so that my computer could read and write it to a CSV file.</p>
 <h4 id="arduino-code-c-simplified">Arduino Code (C++, Simplified)</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">....
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">....
 ....
 
 <span style="color:#66d9ef">void</span> loop()
@@ -157,7 +158,7 @@
     }
 }
 </code></pre></div><h4 id="data-logging-code-python">Data Logging Code (Python)</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> csv
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> csv
 <span style="color:#f92672">import</span> serial
 
 SERIAL_PORT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;COM10&#39;</span>
@@ -185,8 +186,8 @@ ser<span style="color:#f92672">.</span>flush()
 </code></pre></div><h3 id="allan-deviation-computation">Allan Deviation Computation</h3>
 <p>We will be computing the Allan deviation of gyro angle data in degrees. First, I imported the gyro rate data into numpy arrays. Then, I converted the raw gyro rate data from <code>$rad/s$</code> to <code>$deg/s$</code>. Next, I Euler integrated the rate data to compute gyro orientation data in <code>$deg$</code> by computing the cumulative sum (<code>numpy.cumsum()</code>) of the data and multiplying it by the sample period (0.01sec). I then passed the gyro angle data to my Allan deviation function and computed the Allan variance in <code>$deg/s$</code>. Finally, I plotted the data on a log-scale plot.</p>
 <h4 id="allan-variance-code-python">Allan Variance Code (Python)</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> numpy <span style="color:#f92672">as</span> np
-<span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#f92672">as</span> plt
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+<span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
 
 
 <span style="color:#75715e"># Config. params</span>
@@ -223,13 +224,13 @@ plt<span style="color:#f92672">.</span>plot(tauy, ady, label<span style="color:#
 plt<span style="color:#f92672">.</span>plot(tauz, adz, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gz&#39;</span>)
 plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">r</span><span style="color:#e6db74">&#39;$\tau$ [sec]&#39;</span>)
 plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Deviation [deg/sec]&#39;</span>)
-plt<span style="color:#f92672">.</span>grid(True, which<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;both&#34;</span>, ls<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-&#34;</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;0.65&#39;</span>)
+plt<span style="color:#f92672">.</span>grid(<span style="color:#66d9ef">True</span>, which<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;both&#34;</span>, ls<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-&#34;</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;0.65&#39;</span>)
 plt<span style="color:#f92672">.</span>legend()
 plt<span style="color:#f92672">.</span>xscale(<span style="color:#e6db74">&#39;log&#39;</span>)
 plt<span style="color:#f92672">.</span>yscale(<span style="color:#e6db74">&#39;log&#39;</span>)
 plt<span style="color:#f92672">.</span>show()
 </code></pre></div><h4 id="allan-deviation-algorithm-python">Allan Deviation Algorithm (Python)</h4>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
     <span style="color:#e6db74">&#34;&#34;&#34;Compute the Allan deviation (sigma) of time-series data.
 </span><span style="color:#e6db74">
 </span><span style="color:#e6db74">    Algorithm obtained from Mathworks:

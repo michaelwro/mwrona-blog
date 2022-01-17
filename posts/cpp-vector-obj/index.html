@@ -6,9 +6,10 @@
 	<meta property="og:title" content="A Simple C&#43;&#43; Vector Class" />
 <meta property="og:description" content="Introduction Learning how to use arrays in C&#43;&#43; is an extremely important skill to have as a programmer. Generally speaking, arrays are used to store data with identical types as a group. The simplest and most commonly used array is a vector, or 1D array." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://mwrona.com/posts/cpp-vector-obj/" />
+<meta property="og:url" content="https://mwrona.com/posts/cpp-vector-obj/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-09-14T00:00:00+00:00" />
 <meta property="article:modified_time" content="2021-09-14T00:00:00+00:00" />
+
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="A Simple C&#43;&#43; Vector Class"/>
 <meta name="twitter:description" content="Introduction Learning how to use arrays in C&#43;&#43; is an extremely important skill to have as a programmer. Generally speaking, arrays are used to store data with identical types as a group. The simplest and most commonly used array is a vector, or 1D array."/>
@@ -103,11 +104,11 @@
 <p>I will create a <code>float</code> vector class, but the code could be easily modifed by replacing <code>float</code> with <code>double</code>, <code>uint32_t</code>, etc.</p>
 <h2 id="vector-class-declaration">Vector Class Declaration</h2>
 <p>The vector class is declared in it&rsquo;s header file. This defines the constructor, deconstructor, methods, and access specifiers for each method and variable.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Vectorf</span> {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Vectorf</span> {
     <span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-        Vectorf(size_t vecLen <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>);  <span style="color:#75715e">// constructor
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">virtual</span> <span style="color:#f92672">~</span>Vectorf();  <span style="color:#75715e">// deconstructor
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Fill</span>(<span style="color:#66d9ef">float</span> val);
+        Vectorf(size_t vecLen <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>);
+        <span style="color:#f92672">~</span>Vectorf();
+        <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Fill</span>(<span style="color:#66d9ef">float</span> val);
         <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">Print</span>();
         size_t <span style="color:#a6e22e">GetLen</span>();
         <span style="color:#66d9ef">float</span> <span style="color:#a6e22e">Get</span>(size_t index);
@@ -119,7 +120,7 @@
 </span><span style="color:#75715e"></span>};
 </code></pre></div><h2 id="constructor---creating-the-vector">Constructor - Creating the Vector</h2>
 <p>The constructor is called when we create a vector object. The input when creating a vector object will be it&rsquo;s length, or the number of elements. The constructor then allocates the vector&rsquo;s array in heap memory with the <code>new</code> keyword. We have to use dynamic arrays since the array size is unknown until runtime. I added some error checks, too.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">Vectorf<span style="color:#f92672">::</span>Vectorf(size_t vecLen) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">Vectorf<span style="color:#f92672">::</span>Vectorf(size_t vecLen) {
     <span style="color:#75715e">// Check if len is zero
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (vecLen <span style="color:#f92672">==</span> (size_t)<span style="color:#ae81ff">0</span>) {
         <span style="color:#66d9ef">throw</span> std<span style="color:#f92672">::</span>invalid_argument(<span style="color:#e6db74">&#34;Vector length must be greater than zero&#34;</span>);
@@ -140,12 +141,12 @@
 }
 </code></pre></div><h2 id="return-the-length">Return the Length</h2>
 <p>The following method returns the vector length, or the number of elements in the vector&rsquo;s array. This could be used in external code when the length of a vector is unknown.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">size_t Vectorf<span style="color:#f92672">::</span>GetLen() {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">size_t Vectorf<span style="color:#f92672">::</span>GetLen() {
     <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n;
 }
 </code></pre></div><h2 id="get-a-value">Get a Value</h2>
 <p>The <code>Get()</code> method returns the vector&rsquo;s value at the specified index. It also ensures the specified index is less than the vector&rsquo;s length.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">float</span> Vectorf<span style="color:#f92672">::</span>Get(size_t index) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">float</span> Vectorf<span style="color:#f92672">::</span>Get(size_t index) {
     <span style="color:#75715e">// check the specified index
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n) {
         <span style="color:#66d9ef">throw</span> std<span style="color:#f92672">::</span>invalid_argument(<span style="color:#e6db74">&#34;Vector index exceeded length.&#34;</span>);
@@ -156,7 +157,7 @@
 }
 </code></pre></div><h2 id="fill-the-vector">Fill the Vector</h2>
 <p>The <code>fill()</code> method fills the entire array with a specified value. This method is also used in the constructor to initialize the vector with all zeros.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> Vectorf<span style="color:#f92672">::</span>Fill(<span style="color:#66d9ef">float</span> val) {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> Vectorf<span style="color:#f92672">::</span>Fill(<span style="color:#66d9ef">float</span> val) {
     size_t i;
 
     <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; i<span style="color:#f92672">++</span>) {
@@ -166,7 +167,7 @@
 </code></pre></div><h2 id="compute-vector-magnitude">Compute Vector Magnitude</h2>
 <p>The <code>GetNorm()</code> method computes the magnitude, or norm, of the vector. The mangitude is the square root of the sum of of the vector elements, squared.</p>
 <p>$$ norm = \sqrt{x_0^2 + x_1^2 + x_2^2 + &hellip;} $$</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">float</span> Vectorf<span style="color:#f92672">::</span>GetNorm() {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">float</span> Vectorf<span style="color:#f92672">::</span>GetNorm() {
     size_t i;
     <span style="color:#66d9ef">float</span> sum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0f</span>;
 
@@ -179,7 +180,7 @@
 }
 </code></pre></div><h2 id="print-the-vector">Print the Vector</h2>
 <p>The <code>Print()</code> method prints the entire vector to the console. This could be useful for debugging purposes.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> Vectorf<span style="color:#f92672">::</span>Print() {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> Vectorf<span style="color:#f92672">::</span>Print() {
     size_t i;
 
     std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;[ &#34;</span>;  <span style="color:#75715e">// Left bracket
@@ -189,7 +190,7 @@
 </span><span style="color:#75715e"></span>}
 </code></pre></div><h2 id="deconstructor---deallocate-arrays">Deconstructor - Deallocate Arrays</h2>
 <p>The deconstructor deallocates the vector&rsquo;s array after it goes out of scope. This is important so that the computer can use the array&rsquo;s memory locations after the vector is out of scope.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">Vectorf<span style="color:#f92672">::~</span>Vectorf() {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">Vectorf<span style="color:#f92672">::~</span>Vectorf() {
     <span style="color:#66d9ef">delete</span>[] <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec; <span style="color:#75715e">// deallocate from the heap
 </span><span style="color:#75715e"></span>}
 </code></pre></div><p>The source code plus an example can be found at <a href="https://github.com/michaelwro/simple-vectorf">this GitHub repo</a>. I hope this was useful and gave you some inspiration for your C++ projects!</p>

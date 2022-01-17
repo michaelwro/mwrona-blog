@@ -1,125 +1,77 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://mwrona.com/posts/cpp-vector-obj/</loc>
     <lastmod>2021-09-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/c&#43;&#43;/</loc>
     <lastmod>2021-09-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/coding/</loc>
     <lastmod>2021-09-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/</loc>
     <lastmod>2021-09-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/posts/</loc>
     <lastmod>2021-09-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/</loc>
     <lastmod>2021-09-14T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/posts/imu-psd/</loc>
     <lastmod>2021-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/sensors/</loc>
     <lastmod>2021-05-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/posts/gyro-noise-analysis/</loc>
     <lastmod>2021-05-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/python/</loc>
     <lastmod>2021-05-09T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/control-theory/</loc>
     <lastmod>2020-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/posts/attitude-ekf/</loc>
     <lastmod>2020-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/numerical-methods/</loc>
     <lastmod>2020-12-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/posts/bisection-method/</loc>
     <lastmod>2020-12-10T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/posts/accel-roll-pitch/</loc>
     <lastmod>2020-11-27T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/arduino/</loc>
     <lastmod>2020-09-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/circuits/</loc>
     <lastmod>2020-09-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/drone/</loc>
     <lastmod>2020-09-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/posts/read-spektrum-rem-data/</loc>
     <lastmod>2020-09-07T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/posts/drone-project-intro/</loc>
     <lastmod>2020-08-31T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/computers/</loc>
     <lastmod>2020-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/tags/tech-tips/</loc>
     <lastmod>2020-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/posts/first-pc-flip/</loc>
     <lastmod>2020-08-26T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://mwrona.com/about/</loc>
     <lastmod>2020-05-12T00:00:00+00:00</lastmod>
   </url>
-  
 </urlset>
