@@ -18,7 +18,7 @@ googleAnalytics = "UA-176773333-1"
 summaryLength = 40
 
 # Copyright message at the page footer
-copyright = "Copyright © Michael Wrona 2021"
+copyright = "Copyright © Michael Wrona 2022"
 
 
 [params]
