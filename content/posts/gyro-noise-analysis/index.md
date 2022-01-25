@@ -167,7 +167,9 @@ plt.show()
 #### Allan Deviation Algorithm (Python)
 
 ```python
-def AllanDeviation(dataArr, fs, maxNumM=100):
+import numpy as np
+
+def AllanDeviation(dataArr: np.ndarray, fs: float, maxNumM: int=100):
     """Compute the Allan deviation (sigma) of time-series data.
 
     Algorithm obtained from Mathworks:
@@ -175,9 +177,9 @@ def AllanDeviation(dataArr, fs, maxNumM=100):
 
     Args
     ----
-        dataArr (numpy.ndarray): 1D data array
-        fs (int, float): Data sample frequency in Hz
-        maxNumM (int): Number of output points
+        dataArr: 1D data array
+        fs: Data sample frequency in Hz
+        maxNumM: Number of output points
     
     Returns
     -------
