@@ -189,20 +189,25 @@ Finally, here is a pretty good Python implementation of the Bisection Method:
 import numpy as np
 
 
-def BisectionMethod(a0, b0, funct, TOL=1e-6, MAX_ITER=500):
+def BisectionMethod(
+    a0: float,
+    b0: float,
+    funct,
+    TOL:float=1e-6,
+    MAX_ITER:int=500) -> float:
     """Solve for a function's root via the Bisection Method.
 
     Args
     ----
-        a0 (float): Initial left boundary point
-        b0 (float): Initial right boundary point
+        a0: Initial left boundary point
+        b0: Initial right boundary point
         funct (function): Function of interest, f(x)
-        TOL (float): Solution tolerance
-        MAX_ITER (int): Maximum number of iterations
+        TOL: Solution tolerance
+        MAX_ITER: Maximum number of iterations
     
     Returns
     -------
-        p (float): Root of f(x) within [a, b]
+        p: Root of f(x) within [a, b]
     """
     p_prev = 0.0    # Keep track of old p-values
     soln = 0.0      # Store final solution in this variable
@@ -225,6 +230,8 @@ def BisectionMethod(a0, b0, funct, TOL=1e-6, MAX_ITER=500):
             b = p       # Otherwise (if negative), move to the right
 
         p_prev = p      # Replace old with new
+    
+    return p
 
 # Replace with your own function
 def MyFunction(x):
