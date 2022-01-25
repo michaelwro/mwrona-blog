@@ -41,8 +41,8 @@ class Vectorf {
         float GetNorm();
     protected:
     private:
-        size_t n; ///< Vector length
-        float *vec;  ///< Vector's dynamic array
+        size_t n; // Vector length
+        float *vec;  // Vector's dynamic array
 };
 ```
 
@@ -53,7 +53,7 @@ The constructor is called when we create a vector object. The input when creatin
 ```cpp
 Vectorf::Vectorf(size_t vecLen) {
     // Check if len is zero
-    if (vecLen == (size_t)0) {
+    if (vecLen == 0) {
         throw std::invalid_argument("Vector length must be greater than zero");
     }
 
@@ -91,7 +91,6 @@ float Vectorf::Get(size_t index) {
     // check the specified index
     if (index > this->n) {
         throw std::invalid_argument("Vector index exceeded length.");
-        return 0.0f;  // just in case
     }
 
     return this->vec[index];
@@ -105,10 +104,10 @@ The `fill()` method fills the entire array with a specified value. This method i
 
 ```cpp
 void Vectorf::Fill(float val) {
-    size_t i;
+    size_t ii;
 
-    for (i = 0; i < this->n; i++) {
-        this->vec[i] = val;
+    for (ii = 0; ii < this->n; ii++) {
+        this->vec[ii] = val;
     }
 }
 ```
@@ -121,12 +120,12 @@ $$ norm = \sqrt{x_0^2 + x_1^2 + x_2^2 + ...} $$
 
 ```cpp
 float Vectorf::GetNorm() {
-    size_t i;
+    size_t ii;
     float sum = 0.0f;
 
     // Sum of the squares
-    for (i = 0; i < this->n; i++)
-        sum += this->vec[i] * this->vec[i];
+    for (ii = 0; ii < this->n; ii++)
+        sum += this->vec[ii] * this->vec[ii];
 
     // return the square root
     return sqrtf(sum);
@@ -139,11 +138,11 @@ The `Print()` method prints the entire vector to the console. This could be usef
 
 ```cpp
 void Vectorf::Print() {
-    size_t i;
+    size_t ii;
 
     std::cout << "[ ";  // Left bracket
-    for (i = 0; i < this->n; i++)
-        std::cout << this->vec[i] << " ";  // space between elements
+    for (ii = 0; ii < this->n; ii++)
+        std::cout << this->vec[ii] << " ";  // space between elements
     std::cout << "]" << std::endl;  // right bracket
 }
 ```
