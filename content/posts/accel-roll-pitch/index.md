@@ -30,7 +30,7 @@ Where `$g = 9.81m/s^2$` and L refers to the level frame (no tilt, completely fla
 
 Where T refers to the tilted frame and `$a_i$` refers to the accelerometer measurement for each axis. In order to describe the orientation of our tilted frame relative to the level one, we will be using Euler angles; more specifically, the 3-2-1 Euler angle set. I included a few resources at the bottom of the page if you need to brush up on them. The 3-2-1 Euler angles are referred to as yaw (`$\psi$`), pitch (`$\theta$`), and roll (`$\phi$`), respectively, and are commonly used in aircraft dynamics and controls. We will use the 3-2-1 Euler angle direction cosine matrix, or DCM, to convert between the tilted frame and level frame. Since we are ignoring yaw/heading measurements, the DCM relationship between the tilted frame and level frame is:
 
-`$$\begin{pmatrix} a_x \\ a_y \\ a_z \end{pmatrix}_T = \begin{pmatrix} cos\phi & 0 & -sin\theta \\ sin\theta sin\phi & cos\phi & cos\theta sin\phi \\ sin\theta cos\phi & -sin\phi & cos\theta cos\phi \end{pmatrix} \begin{pmatrix} 0 \\ 0 \\ g \end{pmatrix}_L$$`
+`$$\begin{pmatrix} a_x \\ a_y \\ a_z \end{pmatrix}_T = \begin{pmatrix} cos\phi & 0 & -sin\theta \\ sin\theta sin\phi & cos\phi & cos\theta sin\phi \\ sin\theta cos\phi & -sin\phi & cos\theta cos\phi \end{pmatrix} \begin{pmatrix} 0 \\ 0 \\ -g \end{pmatrix}_L$$`
 
 If we carry out the matrix-vector multiplications, we get the following equations:
 
@@ -52,6 +52,8 @@ Using the fact that `$g = \sqrt{a_x^2 + a_y^2 + a_z^2}$` for a stationary sensor
 
 `$$Pitch = \theta = arcsin \frac{a_x}{g} = arcsin \frac{a_x}{\sqrt{a_x^2 + a_y^2 + a_z^2}}$$`
 `$$Roll = \phi = arctan \frac{a_y}{a_z}$$`
+
+`$$ g = 9.81 \, m/s^2 $$`
 
 ------------------------------------
 
