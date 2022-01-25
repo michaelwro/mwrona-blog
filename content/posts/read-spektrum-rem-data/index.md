@@ -248,14 +248,14 @@ Here is the entire Arduino code I wrote. Please cite my blog if you plan on usin
 void processByte(uint8_t inByte);
 void processFrame();
 
-uint8_t byteIndex = 0;
-uint8_t frameCount = 0;  // Number of evaluated frames
+uint8_t byteIndex {0};
+uint8_t frameCount {0};  // Number of evaluated frames
 uint8_t dataBytes[16];  // Array to store the entire 16 byte packet
 uint8_t prevDataBytes[16];  // Store prev. ver. in case of data read error
 uint16_t servo[7];  // Array to hold channel data (7 in total)
-uint16_t numBadReadings = 0;  // Number of missed frames (counter)
+uint16_t numBadReadings {0};  // Number of missed frames (counter)
 uint16_t prevServo[7];  // Store prev. correct readings
-unsigned long prevUpdateTime = 0;
+unsigned long prevUpdateTime {0};
 
 SoftwareSerial Serial1(2, 3);  // Spektrum serial port
 
@@ -276,7 +276,7 @@ void loop() {
 
 
 void processByte(uint8_t inByte) {
-    unsigned long currTime = millis();
+    unsigned long currTime {millis()};
     if (currTime - prevUpdateTime > 10) {
         // 22ms delay between data frames has passed, reset index
         byteIndex = 0;
@@ -305,11 +305,11 @@ void processFrame() {
     // Expects second byte (protocol ID) to be 0xA2.
     // If not, use previous valid data
     if (dataBytes[1] == 0xA2) {
-        for (uint8_t i = 2; i < sizeof(dataBytes); i += 2) {
-            uint8_t hiByte = dataBytes[i];
-            uint8_t loByte = dataBytes[i+1];
-            uint16_t servoVal;
-            uint8_t chanID = (hiByte >> 3) & 0xf;  // Extract channel ID
+        for (uint8_t ii = 2; ii < sizeof(dataBytes); ii += 2) {
+            uint8_t hiByte {dataBytes[ii]};
+            uint8_t loByte {dataBytes[ii+1]};
+            uint16_t servoVal{};
+            uint8_t chanID {(hiByte >> 3) & 0xf};  // Extract channel ID
 
             // Make sure channel ID is less than 6 (range from 0 to 6)
             if (chanID <= 6) {
