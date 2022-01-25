@@ -336,14 +336,14 @@
 <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processByte</span>(<span style="color:#66d9ef">uint8_t</span> inByte);
 <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processFrame</span>();
 
-<span style="color:#66d9ef">uint8_t</span> byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-<span style="color:#66d9ef">uint8_t</span> frameCount <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;  <span style="color:#75715e">// Number of evaluated frames
+<span style="color:#66d9ef">uint8_t</span> byteIndex {<span style="color:#ae81ff">0</span>};
+<span style="color:#66d9ef">uint8_t</span> frameCount {<span style="color:#ae81ff">0</span>};  <span style="color:#75715e">// Number of evaluated frames
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> dataBytes[<span style="color:#ae81ff">16</span>];  <span style="color:#75715e">// Array to store the entire 16 byte packet
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> prevDataBytes[<span style="color:#ae81ff">16</span>];  <span style="color:#75715e">// Store prev. ver. in case of data read error
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> servo[<span style="color:#ae81ff">7</span>];  <span style="color:#75715e">// Array to hold channel data (7 in total)
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> numBadReadings <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;  <span style="color:#75715e">// Number of missed frames (counter)
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> numBadReadings {<span style="color:#ae81ff">0</span>};  <span style="color:#75715e">// Number of missed frames (counter)
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> prevServo[<span style="color:#ae81ff">7</span>];  <span style="color:#75715e">// Store prev. correct readings
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> prevUpdateTime <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> prevUpdateTime {<span style="color:#ae81ff">0</span>};
 
 SoftwareSerial <span style="color:#a6e22e">Serial1</span>(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>);  <span style="color:#75715e">// Spektrum serial port
 </span><span style="color:#75715e"></span>
@@ -364,7 +364,7 @@ SoftwareSerial <span style="color:#a6e22e">Serial1</span>(<span style="color:#ae
 
 
 <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processByte</span>(<span style="color:#66d9ef">uint8_t</span> inByte) {
-    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> currTime <span style="color:#f92672">=</span> millis();
+    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> currTime {millis()};
     <span style="color:#66d9ef">if</span> (currTime <span style="color:#f92672">-</span> prevUpdateTime <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">10</span>) {
         <span style="color:#75715e">// 22ms delay between data frames has passed, reset index
 </span><span style="color:#75715e"></span>        byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
@@ -393,11 +393,11 @@ SoftwareSerial <span style="color:#a6e22e">Serial1</span>(<span style="color:#ae
     <span style="color:#75715e">// Expects second byte (protocol ID) to be 0xA2.
 </span><span style="color:#75715e"></span>    <span style="color:#75715e">// If not, use previous valid data
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (dataBytes[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">0xA2</span>) {
-        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">uint8_t</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">sizeof</span>(dataBytes); i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>) {
-            <span style="color:#66d9ef">uint8_t</span> hiByte <span style="color:#f92672">=</span> dataBytes[i];
-            <span style="color:#66d9ef">uint8_t</span> loByte <span style="color:#f92672">=</span> dataBytes[i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>];
-            <span style="color:#66d9ef">uint16_t</span> servoVal;
-            <span style="color:#66d9ef">uint8_t</span> chanID <span style="color:#f92672">=</span> (hiByte <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">3</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xf</span>;  <span style="color:#75715e">// Extract channel ID
+        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">uint8_t</span> ii <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; ii <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">sizeof</span>(dataBytes); ii <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>) {
+            <span style="color:#66d9ef">uint8_t</span> hiByte {dataBytes[ii]};
+            <span style="color:#66d9ef">uint8_t</span> loByte {dataBytes[ii<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>]};
+            <span style="color:#66d9ef">uint16_t</span> servoVal{};
+            <span style="color:#66d9ef">uint8_t</span> chanID {(hiByte <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">3</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xf</span>};  <span style="color:#75715e">// Extract channel ID
 </span><span style="color:#75715e"></span>
             <span style="color:#75715e">// Make sure channel ID is less than 6 (range from 0 to 6)
 </span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (chanID <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">6</span>) {
