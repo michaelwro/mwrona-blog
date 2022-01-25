@@ -115,14 +115,14 @@
         <span style="color:#66d9ef">float</span> <span style="color:#a6e22e">GetNorm</span>();
     <span style="color:#66d9ef">protected</span><span style="color:#f92672">:</span>
     <span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
-        size_t n; <span style="color:#75715e">///&lt; Vector length
-</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">float</span> <span style="color:#f92672">*</span>vec;  <span style="color:#75715e">///&lt; Vector&#39;s dynamic array
+        size_t n; <span style="color:#75715e">// Vector length
+</span><span style="color:#75715e"></span>        <span style="color:#66d9ef">float</span> <span style="color:#f92672">*</span>vec;  <span style="color:#75715e">// Vector&#39;s dynamic array
 </span><span style="color:#75715e"></span>};
 </code></pre></div><h2 id="constructor---creating-the-vector">Constructor - Creating the Vector</h2>
 <p>The constructor is called when we create a vector object. The input when creating a vector object will be it&rsquo;s length, or the number of elements. The constructor then allocates the vector&rsquo;s array in heap memory with the <code>new</code> keyword. We have to use dynamic arrays since the array size is unknown until runtime. I added some error checks, too.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">Vectorf<span style="color:#f92672">::</span>Vectorf(size_t vecLen) {
     <span style="color:#75715e">// Check if len is zero
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (vecLen <span style="color:#f92672">==</span> (size_t)<span style="color:#ae81ff">0</span>) {
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (vecLen <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
         <span style="color:#66d9ef">throw</span> std<span style="color:#f92672">::</span>invalid_argument(<span style="color:#e6db74">&#34;Vector length must be greater than zero&#34;</span>);
     }
 
@@ -150,30 +150,29 @@
     <span style="color:#75715e">// check the specified index
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n) {
         <span style="color:#66d9ef">throw</span> std<span style="color:#f92672">::</span>invalid_argument(<span style="color:#e6db74">&#34;Vector index exceeded length.&#34;</span>);
-        <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0.0f</span>;  <span style="color:#75715e">// just in case
-</span><span style="color:#75715e"></span>    }
+    }
 
     <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[index];
 }
 </code></pre></div><h2 id="fill-the-vector">Fill the Vector</h2>
 <p>The <code>fill()</code> method fills the entire array with a specified value. This method is also used in the constructor to initialize the vector with all zeros.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> Vectorf<span style="color:#f92672">::</span>Fill(<span style="color:#66d9ef">float</span> val) {
-    size_t i;
+    size_t ii;
 
-    <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; i<span style="color:#f92672">++</span>) {
-        <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[i] <span style="color:#f92672">=</span> val;
+    <span style="color:#66d9ef">for</span> (ii <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; ii <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; ii<span style="color:#f92672">++</span>) {
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[ii] <span style="color:#f92672">=</span> val;
     }
 }
 </code></pre></div><h2 id="compute-vector-magnitude">Compute Vector Magnitude</h2>
 <p>The <code>GetNorm()</code> method computes the magnitude, or norm, of the vector. The mangitude is the square root of the sum of of the vector elements, squared.</p>
 <p>$$ norm = \sqrt{x_0^2 + x_1^2 + x_2^2 + &hellip;} $$</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">float</span> Vectorf<span style="color:#f92672">::</span>GetNorm() {
-    size_t i;
+    size_t ii;
     <span style="color:#66d9ef">float</span> sum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0f</span>;
 
     <span style="color:#75715e">// Sum of the squares
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; i<span style="color:#f92672">++</span>)
-        sum <span style="color:#f92672">+=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[i] <span style="color:#f92672">*</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[i];
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (ii <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; ii <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; ii<span style="color:#f92672">++</span>)
+        sum <span style="color:#f92672">+=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[ii] <span style="color:#f92672">*</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[ii];
 
     <span style="color:#75715e">// return the square root
 </span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">sqrtf</span>(sum);
@@ -181,11 +180,11 @@
 </code></pre></div><h2 id="print-the-vector">Print the Vector</h2>
 <p>The <code>Print()</code> method prints the entire vector to the console. This could be useful for debugging purposes.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp"><span style="color:#66d9ef">void</span> Vectorf<span style="color:#f92672">::</span>Print() {
-    size_t i;
+    size_t ii;
 
     std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;[ &#34;</span>;  <span style="color:#75715e">// Left bracket
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; i<span style="color:#f92672">++</span>)
-        std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[i] <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34; &#34;</span>;  <span style="color:#75715e">// space between elements
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">for</span> (ii <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; ii <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>n; ii<span style="color:#f92672">++</span>)
+        std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">-&gt;</span>vec[ii] <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34; &#34;</span>;  <span style="color:#75715e">// space between elements
 </span><span style="color:#75715e"></span>    std<span style="color:#f92672">::</span>cout <span style="color:#f92672">&lt;&lt;</span> <span style="color:#e6db74">&#34;]&#34;</span> <span style="color:#f92672">&lt;&lt;</span> std<span style="color:#f92672">::</span>endl;  <span style="color:#75715e">// right bracket
 </span><span style="color:#75715e"></span>}
 </code></pre></div><h2 id="deconstructor---deallocate-arrays">Deconstructor - Deallocate Arrays</h2>

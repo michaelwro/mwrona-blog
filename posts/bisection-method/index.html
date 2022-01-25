@@ -252,20 +252,25 @@ plt<span style="color:#f92672">.</span>grid()
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
 
 
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">BisectionMethod</span>(a0, b0, funct, TOL<span style="color:#f92672">=</span><span style="color:#ae81ff">1e-6</span>, MAX_ITER<span style="color:#f92672">=</span><span style="color:#ae81ff">500</span>):
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">BisectionMethod</span>(
+    a0: float,
+    b0: float,
+    funct,
+    TOL:float<span style="color:#f92672">=</span><span style="color:#ae81ff">1e-6</span>,
+    MAX_ITER:int<span style="color:#f92672">=</span><span style="color:#ae81ff">500</span>) <span style="color:#f92672">-&gt;</span> float:
     <span style="color:#e6db74">&#34;&#34;&#34;Solve for a function&#39;s root via the Bisection Method.
 </span><span style="color:#e6db74">
 </span><span style="color:#e6db74">    Args
 </span><span style="color:#e6db74">    ----
-</span><span style="color:#e6db74">        a0 (float): Initial left boundary point
-</span><span style="color:#e6db74">        b0 (float): Initial right boundary point
+</span><span style="color:#e6db74">        a0: Initial left boundary point
+</span><span style="color:#e6db74">        b0: Initial right boundary point
 </span><span style="color:#e6db74">        funct (function): Function of interest, f(x)
-</span><span style="color:#e6db74">        TOL (float): Solution tolerance
-</span><span style="color:#e6db74">        MAX_ITER (int): Maximum number of iterations
+</span><span style="color:#e6db74">        TOL: Solution tolerance
+</span><span style="color:#e6db74">        MAX_ITER: Maximum number of iterations
 </span><span style="color:#e6db74">    
 </span><span style="color:#e6db74">    Returns
 </span><span style="color:#e6db74">    -------
-</span><span style="color:#e6db74">        p (float): Root of f(x) within [a, b]
+</span><span style="color:#e6db74">        p: Root of f(x) within [a, b]
 </span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
     p_prev <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>    <span style="color:#75715e"># Keep track of old p-values</span>
     soln <span style="color:#f92672">=</span> <span style="color:#ae81ff">0.0</span>      <span style="color:#75715e"># Store final solution in this variable</span>
@@ -288,6 +293,8 @@ plt<span style="color:#f92672">.</span>grid()
             b <span style="color:#f92672">=</span> p       <span style="color:#75715e"># Otherwise (if negative), move to the right</span>
 
         p_prev <span style="color:#f92672">=</span> p      <span style="color:#75715e"># Replace old with new</span>
+    
+    <span style="color:#66d9ef">return</span> p
 
 <span style="color:#75715e"># Replace with your own function</span>
 <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">MyFunction</span>(x):

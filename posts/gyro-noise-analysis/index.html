@@ -230,7 +230,9 @@ plt<span style="color:#f92672">.</span>xscale(<span style="color:#e6db74">&#39;l
 plt<span style="color:#f92672">.</span>yscale(<span style="color:#e6db74">&#39;log&#39;</span>)
 plt<span style="color:#f92672">.</span>show()
 </code></pre></div><h4 id="allan-deviation-algorithm-python">Allan Deviation Algorithm (Python)</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr: np<span style="color:#f92672">.</span>ndarray, fs: float, maxNumM: int<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
     <span style="color:#e6db74">&#34;&#34;&#34;Compute the Allan deviation (sigma) of time-series data.
 </span><span style="color:#e6db74">
 </span><span style="color:#e6db74">    Algorithm obtained from Mathworks:
@@ -238,9 +240,9 @@ plt<span style="color:#f92672">.</span>show()
 </span><span style="color:#e6db74">
 </span><span style="color:#e6db74">    Args
 </span><span style="color:#e6db74">    ----
-</span><span style="color:#e6db74">        dataArr (numpy.ndarray): 1D data array
-</span><span style="color:#e6db74">        fs (int, float): Data sample frequency in Hz
-</span><span style="color:#e6db74">        maxNumM (int): Number of output points
+</span><span style="color:#e6db74">        dataArr: 1D data array
+</span><span style="color:#e6db74">        fs: Data sample frequency in Hz
+</span><span style="color:#e6db74">        maxNumM: Number of output points
 </span><span style="color:#e6db74">    
 </span><span style="color:#e6db74">    Returns
 </span><span style="color:#e6db74">    -------
