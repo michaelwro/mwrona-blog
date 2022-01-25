@@ -4,7 +4,7 @@
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Earth Gravity Modelling - Michael Wrona&#39;s Blog</title><link rel="icon" type="image/png" href=/favicon.png /><meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta property="og:title" content="Earth Gravity Modelling" />
-<meta property="og:description" content="Contrary to popular belief, EARTH IS NOT FLAT. Earth&rsquo;s mean equatorial radius is about 6,378km and its mean polar radius is about 6,357km - a 21km difference! Earth&rsquo;s mountains, vallies, oceans, and varying sub-surface composition also contributes towards earth&rsquo;s irregular shape and therefore mass distribution." />
+<meta property="og:description" content="Contrary to popular belief, EARTH IS NOT FLAT. Earth&rsquo;s mean equatorial radius is about 6,378km and its mean polar radius is about 6,357km - a 21km difference! Earth&rsquo;s mountains, valleys, oceans, and varying sub-surface composition also contributes towards earth&rsquo;s irregular shape and therefore mass distribution." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://mwrona.com/posts/gravity-models/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2022-01-14T00:00:00+00:00" />
@@ -12,7 +12,7 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Earth Gravity Modelling"/>
-<meta name="twitter:description" content="Contrary to popular belief, EARTH IS NOT FLAT. Earth&rsquo;s mean equatorial radius is about 6,378km and its mean polar radius is about 6,357km - a 21km difference! Earth&rsquo;s mountains, vallies, oceans, and varying sub-surface composition also contributes towards earth&rsquo;s irregular shape and therefore mass distribution."/>
+<meta name="twitter:description" content="Contrary to popular belief, EARTH IS NOT FLAT. Earth&rsquo;s mean equatorial radius is about 6,378km and its mean polar radius is about 6,357km - a 21km difference! Earth&rsquo;s mountains, valleys, oceans, and varying sub-surface composition also contributes towards earth&rsquo;s irregular shape and therefore mass distribution."/>
 <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,300italic,400italic|Raleway:200,300" rel="stylesheet">
 
 	<link rel="stylesheet" type="text/css" media="screen" href="https://mwrona.com/css/normalize.css" />
@@ -88,11 +88,10 @@
 		</div>
 
 		<div class="markdown">
-			<p>Contrary to popular belief, EARTH IS <em>NOT</em> FLAT. Earth&rsquo;s mean equatorial radius is about 6,378km and its mean polar radius is about 6,357km - a 21km difference! Earth&rsquo;s mountains, vallies, oceans, and varying sub-surface composition also contributes towards earth&rsquo;s irregular shape and therefore mass distribution. While this may seem unimportant for the average person, they are extremely important to consider for high-precision land, air, sea, and space navigation.</p>
-<p>Equations of motion for ground vehicles, submarines, aircraft, rockets, missiles, and spacecraft use gravitational acceleration <code>$g$</code> in them.  and Therefore, high-precision navigation of the above vehicles depends on how accurately you can compute <code>$g$</code>.</p>
-<p>The field of geodesy involves measuring and modelling earth&rsquo;s size, shape, mass distribution, and gravitational acceleration. If you&rsquo;ve taken any basic physics class, you probably know <code>$g$</code> as <code>$9.81m/s^2$</code> and never questioned it, as did I. This simple approximation works fine for back-of-the-napkin calculations, but as with most things in science and engineering, is not good enough for actual use. In this post, I&rsquo;ll introduce a relatively simple, yet accurate formula developed by geodesists to compute gravitational acceleration as a function of position and altitude.</p>
+			<p>Contrary to popular belief, EARTH IS <em>NOT</em> FLAT. Earth&rsquo;s mean equatorial radius is about 6,378km and its mean polar radius is about 6,357km - a 21km difference! Earth&rsquo;s mountains, valleys, oceans, and varying sub-surface composition also contributes towards earth&rsquo;s irregular shape and therefore mass distribution. While this may seem unimportant for the average person, they are extremely important to consider for high-precision navigation. Equations of motion for ground vehicles, submarines, aircraft, rockets, missiles, and spacecraft use gravitational acceleration <code>$g$</code> in them. Therefore, high-precision navigation of these vehicles depends on how accurately you can model <code>$g$</code>.</p>
+<p>The field of geodesy involves measuring and modelling earth&rsquo;s size, shape, mass distribution, and gravitational acceleration. If you&rsquo;ve taken any basic physics class, you probably know <code>$g$</code> as <code>$9.81m/s^2$</code> and never questioned it, as did I. This simple approximation works fine for back-of-the-napkin calculations, but as with most things in science and engineering, is not good enough for actual use. In this post, I&rsquo;ll introduce relatively simple, yet accurate formulas developed by geodesists to compute gravitational acceleration as a function of position and altitude.</p>
 <h2 id="wgs84">WGS84</h2>
-<p>Gravity as we all know it, <code>$g = 9.81 m/s^2$</code>, is derived from the World Geodetic System 1984 (WGS84) standard. WGS84 was developed by the US National Geospatial-Intelligence Agency to be a standard coordinate system and parameter set for cartography and geodesy. In fact, the WGS84 system is what GPS uses to define your latitude, longitude, and altitude. The WGS84 standard contains fundamental constants that define earth&rsquo;s shape and gravitational acceleration. WGS84 gravitational acceleration is <code>$g_0 = 9.80665 m/s^2$</code>. Round that to 2 decimal places, and you arrive at the familiar <code>$g = 9.81m/s^2$</code>.</p>
+<p>Gravity as we all know it, <code>$g = 9.81 m/s^2$</code>, is derived from the World Geodetic System 1984 (WGS84) standard. WGS84 was developed by the US National Geospatial-Intelligence Agency to be a standard coordinate system and parameter set for cartography and geodesy. In fact, the GPS system uses the WGS84 system to compute latitude and longitude. Additionally, the WGS84 standard contains fundamental constants that define earth&rsquo;s shape and gravitational acceleration. WGS84 gravitational acceleration is <code>$g_0 = 9.80665 m/s^2$</code>. Round that to 2 decimal places, and you arrive at the familiar <code>$g = 9.81m/s^2$</code>.</p>
 <h3 id="wgs84-constants">WGS84 Constants</h3>
 <table>
 <thead>
@@ -149,11 +148,11 @@
 <p>The <a href="https://en.wikipedia.org/wiki/Theoretical_gravity#Somigliana_equation">WGS84 gravity model</a> coefficients are derived from WGS84 constants. It also computes <em>MSL</em> gravitational acceleration as a function of geodetic latitude.</p>
 <p><code>$$ g(\phi) = 9.780325335903891718546\left[{\frac {1+0.00193185265245827352087\sin ^{2}(\phi )}{\sqrt {1-0.006694379990141316996137\sin ^{2}(\phi )}}}\right]\ \, m/s^{2}$$</code></p>
 <h2 id="combining-equations">Combining Equations</h2>
-<p>The two gravity models compute gravitational acceleration at sea level. To accound for altitude above MSL, you must apply the free air corrections. Simply add the free air correction equation to Helmert&rsquo;s equation or the WGS84 model. I&rsquo;ll use Helmert&rsquo;s equation as an example.</p>
+<p>The two gravity models compute gravitational acceleration at sea level. To account for altitude above MSL, you must apply the free air corrections. Simply add the free air correction equation to Helmert&rsquo;s equation or the WGS84 model. I&rsquo;ll use Helmert&rsquo;s equation as an example.</p>
 <p><code>$$ g(\phi, h) = g(\phi) + \Delta g(h) $$</code></p>
 <p><code>$$ g(\phi, h) = 9.780327 \left[1 + 0.0053024\sin^{2}(\phi) - 0.0000058\sin^{2}(2\phi)\right] + \left(\frac{GM}{(a + h)^2} - \frac{GM}{a^2}\right) \,\, m/s^{2} $$</code></p>
 <h1 id="final-remarks">Final Remarks</h1>
-<p>Both of these equations are pretty accurate approximations compared to higher fidelity gravity models. Personally, I would feel comfortable using these equations for altitudes less than 70 km. For higher altitude applications, I would use a more accurate gravity model. Have fun using this in your projects!</p>
+<p>Both of these equations are pretty accurate approximations compared to higher fidelity gravity models. Personally, I would feel comfortable using these equations for altitudes less than 70 km. For higher altitude and space applications, a more accurate gravity model is necessary. Have fun using this in your projects!</p>
 
 		</div>
 
