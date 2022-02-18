@@ -2,8 +2,8 @@
 <html>
 <head>
 	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Rocket Flight Data Unit Project Introduction - Michael Wrona&#39;s Blog</title><link rel="icon" type="image/png" href=/favicon.png /><meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta property="og:title" content="Rocket Flight Data Unit Project Introduction" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Rocket Flight Data Computer - Introduction &amp; Requirements Definition - Michael Wrona&#39;s Blog</title><link rel="icon" type="image/png" href=/favicon.png /><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta property="og:title" content="Rocket Flight Data Computer - Introduction &amp; Requirements Definition" />
 <meta property="og:description" content="I have been interested in model rocketry for a long time. Putting the time and energy into designing and building a model rocket, watching it leave the launch pad in a plume of smoke, and fly into the sky is very exciting and rewarding." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://mwrona.com/posts/rocket-flight-computer-intro/" /><meta property="article:section" content="posts" />
@@ -11,7 +11,7 @@
 <meta property="article:modified_time" content="2022-02-13T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Rocket Flight Data Unit Project Introduction"/>
+<meta name="twitter:title" content="Rocket Flight Data Computer - Introduction &amp; Requirements Definition"/>
 <meta name="twitter:description" content="I have been interested in model rocketry for a long time. Putting the time and energy into designing and building a model rocket, watching it leave the launch pad in a plume of smoke, and fly into the sky is very exciting and rewarding."/>
 <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,300italic,400italic|Raleway:200,300" rel="stylesheet">
 
@@ -83,7 +83,7 @@
 
 
 		<div class="post-header">
-			<h1 class="title">Rocket Flight Data Unit Project Introduction</h1>
+			<h1 class="title">Rocket Flight Data Computer - Introduction &amp; Requirements Definition</h1>
 			<div class="meta">Posted at &mdash; Feb 13, 2022</div>
 		</div>
 
@@ -92,9 +92,16 @@
 <blockquote>
 <p>MicWro Engineering is developing a model rocket Flight Data Unit (FDU) to log in-flight performance data and give further insight into a rocket&rsquo;s flight.</p>
 </blockquote>
-<h2 id="project-requirements">Project Requirements</h2>
+<h2 id="functional-requirements">Functional Requirements</h2>
 <ul>
-<li>The FDU shall measure and log the following parameters:
+<li>The FDU shall include a signal channel to deploy a parachute at apogee.</li>
+<li>The FDU shall include a buzzer to aid in locating the rocket during recovery.</li>
+<li>The FDU shall log data at a minimum sample rate of 50 samples per second.</li>
+<li>The FDU shall write flight data logs to a flash memory chip and dump the logs to a Micro SD card at the end of flight.</li>
+</ul>
+<h2 id="sensor-requirements">Sensor Requirements</h2>
+<ul>
+<li>The FDU shall, at minimum, measure and log the following parameters:
 <ul>
 <li>Position</li>
 <li>Speed</li>
@@ -106,16 +113,45 @@
 </li>
 <li>The FDU shall include the following sensors:
 <ul>
-<li>IMU</li>
+<li>IMU (accelerometer + gyroscope)</li>
+<li>Compass</li>
 <li>GPS</li>
 <li>Barometer</li>
 <li>Temperature sensor</li>
 </ul>
 </li>
-<li>The FDU shall include a signal channel to deploy a parachute at apogee.</li>
-<li>The FDU shall include a buzzer to aid in locating the rocket during recovery.</li>
-<li>The FDU shall log data at a minimum sample rate of 50 samples per second.</li>
-<li>The FDU shall write flight data logs to a flash memory chip and dump the logs to a Micro SD card at the end of flight.</li>
+</ul>
+<h3 id="accelerometer-requirements">Accelerometer Requirements</h3>
+<ul>
+<li>The accelerometer shall have a measurement range of at least +/- 25G&rsquo;s.</li>
+<li>The accelerometer shall have a sample rate of at least 100Hz.</li>
+<li>The accelerometer shall have an ADC resolution of at least 12 bits.</li>
+<li>The accelerometer shall communicate using a SPI interface.</li>
+</ul>
+<h3 id="gyro-requirements">Gyro Requirements</h3>
+<ul>
+<li>The gyro shall have a measurement range of at least +/- 500 degrees per second.</li>
+<li>The gyro shall have a sample rate of at least 100Hz.</li>
+<li>The gyro shall have an ADC resolution of at least 12 bits.</li>
+<li>The gyro shall communicate using a SPI interface.</li>
+</ul>
+<h3 id="compass-magnetometer-requirements">Compass (Magnetometer) Requirements</h3>
+<ul>
+<li>The compass shall be capable of measuring earth&rsquo;s magnetic field.</li>
+<li>The compass shall have an ADC resolution of at least 12 bits.</li>
+<li>The compass shall have a sample rate of at least 100Hz.</li>
+<li>The compass shall communicate using a SPI interface.</li>
+</ul>
+<h3 id="altimeter-barometric-pressure-sensor-requirements">Altimeter (Barometric Pressure Sensor) Requirements</h3>
+<ul>
+<li>The altimeter shall have an ADC resolution of at least 12 bits.</li>
+<li>The altimeter shall be capable of measuring atmospheric pressures up to 30km altitude AGL.</li>
+<li>The altimeter shall communicate using a SPI interface.</li>
+</ul>
+<h3 id="gps-requirements">GPS Requirements</h3>
+<ul>
+<li>The GPS shall have a sample rate of at least 10Hz.</li>
+<li>The GPS shall communicate at a serial baud rate of at least 115200 bauds per second.</li>
 </ul>
 <p>These are high-level requirements that will be refined as development progresses.</p>
 <h2 id="design-timeline">Design Timeline</h2>
