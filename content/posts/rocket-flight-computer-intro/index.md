@@ -36,7 +36,7 @@ I have been interested in model rocketry for a long time. Putting the time and e
 
 ### Accelerometer Requirements
 
-- The accelerometer shall have a measurement range of at least +/- 25G's.
+- The accelerometer shall have a measurement range of at least +/- 50G's.
 - The accelerometer shall have a sample rate of at least 100Hz.
 - The accelerometer shall have an ADC resolution of at least 12 bits.
 - The accelerometer shall communicate using a SPI interface.
