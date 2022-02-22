@@ -14,6 +14,7 @@ I have been interested in model rocketry for a long time. Putting the time and e
 
 - The FDU shall include a signal channel to deploy a parachute at apogee.
 - The FDU shall include a buzzer to aid in locating the rocket during recovery.
+- The FDU shall fit within a 3 inch diameter rocket body.
 - The FDU shall log data at a minimum sample rate of 50 samples per second.
 - The FDU shall write flight data logs to a flash memory chip and dump the logs to a Micro SD card at the end of flight.
 
