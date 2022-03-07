@@ -228,207 +228,207 @@
 <h3 id="getting-serial-data">Getting Serial Data</h3>
 <p>I used the SoftwareSerial library to &lsquo;convert&rsquo; Arduino Uno pin 2 to a serial input. I labelled this serial port as <code>Serial1</code>. <strong>The default baud rate for the remote reciever is 115200!</strong></p>
 <p>In the Arduino&rsquo;s <code>loop()</code> function, I had the Uno listen to the remote receiver&rsquo;s serial connection until it received a serial byte. When a byte was received, the byte was then passed on to my processing function.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">SoftwareSerial <span style="color:#a6e22e">Serial1</span>(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>);  <span style="color:#75715e">// (rx, tx) receiver&#39;s serial port
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setup</span>() {
-    <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>Serial);  <span style="color:#75715e">// Wait for serial console to open
-</span><span style="color:#75715e"></span>    Serial.begin(<span style="color:#ae81ff">115200</span>);  <span style="color:#75715e">// Arduino&#39;s port
-</span><span style="color:#75715e"></span>    Serial1.begin(<span style="color:#ae81ff">115200</span>);  <span style="color:#75715e">// Spektrum&#39;s port
-</span><span style="color:#75715e"></span>}
-
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loop</span>() {
-    <span style="color:#66d9ef">if</span> (Serial1.available() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
-        <span style="color:#66d9ef">uint8_t</span> incomingByte <span style="color:#f92672">=</span> Serial1.read();  <span style="color:#75715e">// Get data!
-</span><span style="color:#75715e"></span>        processByte(incomingByte);
-    }
-}
-</code></pre></div><h3 id="processing-the-data">Processing the Data</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span>SoftwareSerial <span style="color:#a6e22e">Serial1</span>(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>);  <span style="color:#75715e">// (rx, tx) receiver&#39;s serial port
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setup</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>Serial);  <span style="color:#75715e">// Wait for serial console to open
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Serial.begin(<span style="color:#ae81ff">115200</span>);  <span style="color:#75715e">// Arduino&#39;s port
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Serial1.begin(<span style="color:#ae81ff">115200</span>);  <span style="color:#75715e">// Spektrum&#39;s port
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loop</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (Serial1.available() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">uint8_t</span> incomingByte <span style="color:#f92672">=</span> Serial1.read();  <span style="color:#75715e">// Get data!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        processByte(incomingByte);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="processing-the-data">Processing the Data</h3>
 <p>The incoming bytes from the remote receiver needed to be stored in an array for processing. In order to figure out what array index to put the incoming byte into, I needed to figure out some logic to determine the proper index. As described in the datasheet, there was a 22ms delay between each data frame. Therefore, if the time between the current and previous receive was greater than about 10ms, the current byte was the first in a new transmission. I used a counter variable as an array index. Every time a new serial byte was received, the counter/array index was incremented by one. The array index variable was reset to zero when it reached 15, a full frame (the end of the array). Once a full data frame was received and the data array was full, the frame was passed on to another function to extract the channel/servo data.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processByte</span>(<span style="color:#66d9ef">uint8_t</span> inByte) {
-    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> currTime <span style="color:#f92672">=</span> millis();
-    <span style="color:#66d9ef">if</span> (currTime <span style="color:#f92672">-</span> prevUpdateTime <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">10</span>) {
-        <span style="color:#75715e">// 22ms delay between data frames has passed, reset index
-</span><span style="color:#75715e"></span>        byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-    }
-
-    dataBytes[byteIndex] <span style="color:#f92672">=</span> inByte;  <span style="color:#75715e">// Add byte to array
-</span><span style="color:#75715e"></span>    byteIndex<span style="color:#f92672">++</span>;
-
-    <span style="color:#66d9ef">if</span> (byteIndex <span style="color:#f92672">==</span> <span style="color:#66d9ef">sizeof</span>(dataBytes)) {  <span style="color:#75715e">// If the index is at 16
-</span><span style="color:#75715e"></span>        <span style="color:#75715e">// dataBytes is full, time to parse and extract channel 
-</span><span style="color:#75715e"></span>        <span style="color:#75715e">// data/servo positions
-</span><span style="color:#75715e"></span>        processFrame();
-        byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-        frameCount<span style="color:#f92672">++</span>;
-    }
-
-    <span style="color:#75715e">// currTime and prevUpdateTime will be very close when receiving bytes in 
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// quick succession When the frame transmission is done, the time will 
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// hold constant. Then, when a new frame comes along, the time difference 
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// will be large
-</span><span style="color:#75715e"></span>    prevUpdateTime <span style="color:#f92672">=</span> currTime;
-}
-</code></pre></div><h3 id="extracting-channel-data">Extracting Channel Data</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processByte</span>(<span style="color:#66d9ef">uint8_t</span> inByte) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> currTime <span style="color:#f92672">=</span> millis();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (currTime <span style="color:#f92672">-</span> prevUpdateTime <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">10</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 22ms delay between data frames has passed, reset index
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    dataBytes[byteIndex] <span style="color:#f92672">=</span> inByte;  <span style="color:#75715e">// Add byte to array
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    byteIndex<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (byteIndex <span style="color:#f92672">==</span> <span style="color:#66d9ef">sizeof</span>(dataBytes)) {  <span style="color:#75715e">// If the index is at 16
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// dataBytes is full, time to parse and extract channel 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// data/servo positions
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        processFrame();
+</span></span><span style="display:flex;"><span>        byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        frameCount<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// currTime and prevUpdateTime will be very close when receiving bytes in 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// quick succession When the frame transmission is done, the time will 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// hold constant. Then, when a new frame comes along, the time difference 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// will be large
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    prevUpdateTime <span style="color:#f92672">=</span> currTime;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="extracting-channel-data">Extracting Channel Data</h3>
 <p>Before processing each frame and extracting channel data/servo positions, some error-checking was performed to validate the frame was correct. Then, bit masking and bitwise operations were perfomed to extract each channel&rsquo;s data.</p>
 <p>Recall that the first byte in each frame is the number of frames the remote receiver missed or dropped. This never changed from zero during my testing, so I never used this value for anything. However, the second byte in each frame was very important. The value of this byte describes the protocol used by the remote receiver. My receiver&rsquo;s was <code>0xA2</code>, which corresponded to the 22ms/2048 DSMX protocol. For some reason, the ID byte occasionally switched to <code>0xA1</code> or <code>0xA3</code> for a single frame. The rest of the frame seemed normal, but just as a safeguard, I ignored every frame whose ID wasn&rsquo;t <code>0xA2</code>.</p>
-<p>Recall that the third through 16th byte in each frame contains the channel data as big-endian 16-bit unsigned integers. Every pair of bytes were parsed. The first byte byte in each pair was the &lsquo;high&rsquo; byte, and second was the &lsquo;low&rsquo; byte. First, the channel ID (number) was extracted from the high byte via bitwise operations. Next, the pair of big-endian bytes were converted to standard <code>uint16_t</code> type via bitwise operations to compute the corresponding channel&rsquo;s value. The result was masked with <code>0x07FF</code>, which is 2047 in hex.</p>
+<p>Recall that the third through 16th byte in each frame contains the channel data as big-endian 16-bit unsigned integers. Every pair of bytes were parsed. The first byte byte in each pair was the &lsquo;high&rsquo; byte, and second was the &rsquo;low&rsquo; byte. First, the channel ID (number) was extracted from the high byte via bitwise operations. Next, the pair of big-endian bytes were converted to standard <code>uint16_t</code> type via bitwise operations to compute the corresponding channel&rsquo;s value. The result was masked with <code>0x07FF</code>, which is 2047 in hex.</p>
 <p>Next, I converted the channel&rsquo;s value to fall within the standard servo PWM signal pulse width: between 1000us and 2000us, centered at 1500us. The remote receiver&rsquo;s datasheet gave an equation to do this. Finally, the channel value was stored in an array, with its index corresponding to the the channel&rsquo;s ID. Sometimes, the channel ID exceeded 6 for some reason, so I therefore ignored those values.</p>
 <p>Also, I stored the previous valid readings just in case an error occurred.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processFrame</span>() {
-    <span style="color:#75715e">// Expects second byte (protocol ID) to be 0xA2.
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// If not, use previous valid data
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (dataBytes[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">0xA2</span>) {
-        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">uint8_t</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">sizeof</span>(dataBytes); i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>) {
-            <span style="color:#66d9ef">uint8_t</span> hiByte <span style="color:#f92672">=</span> dataBytes[i];
-            <span style="color:#66d9ef">uint8_t</span> loByte <span style="color:#f92672">=</span> dataBytes[i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>];
-            <span style="color:#66d9ef">uint16_t</span> servoVal;
-            <span style="color:#66d9ef">uint8_t</span> chanID <span style="color:#f92672">=</span> (hiByte <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">3</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xf</span>;  <span style="color:#75715e">// Extract channel ID
-</span><span style="color:#75715e"></span>
-            <span style="color:#75715e">// Make sure channel ID is less than 6 (range from 0 to 6)
-</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (chanID <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">6</span>) {
-                <span style="color:#75715e">// Convert two bytes in big-endian to int
-</span><span style="color:#75715e"></span>                <span style="color:#75715e">// https://stackoverflow.com/a/2660326
-</span><span style="color:#75715e"></span>                servoVal <span style="color:#f92672">=</span> ((hiByte <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">|</span> loByte) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x07FF</span>;
-
-                <span style="color:#75715e">// Constrain values to a range, just in case an error occurs
-</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">if</span> (servoVal <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">300</span>)
-                    servoVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">300</span>;
-
-                <span style="color:#66d9ef">if</span> (servoVal <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1730</span>)
-                    servoVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">1730</span>;
-
-                <span style="color:#75715e">// Use equation in DSMX datasheet to convert [0 2048] values
-</span><span style="color:#75715e"></span>                <span style="color:#75715e">// to standard PWM range [~1000ms ~2000ms] with center at 1500ms
-</span><span style="color:#75715e"></span>                servo[chanID] <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.583f</span> <span style="color:#f92672">*</span> servoVal) <span style="color:#f92672">+</span> <span style="color:#ae81ff">903</span>;
-            }
-        }
-        <span style="color:#75715e">// memcpy(dest, src, sizeof);
-</span><span style="color:#75715e"></span>        memcpy(prevDataBytes, dataBytes, <span style="color:#66d9ef">sizeof</span>(dataBytes));
-        memcpy(prevServo, servo, <span style="color:#66d9ef">sizeof</span>(servo));
-    }
-    <span style="color:#66d9ef">else</span> {
-        <span style="color:#75715e">// Bad reading, use previous (valid) data
-</span><span style="color:#75715e"></span>        memcpy(dataBytes, prevDataBytes, <span style="color:#66d9ef">sizeof</span>(prevDataBytes));
-        memcpy(servo, prevServo, <span style="color:#66d9ef">sizeof</span>(prevServo));
-        numBadReadings<span style="color:#f92672">++</span>;
-    }
-}
-</code></pre></div><h2 id="results">Results</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processFrame</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Expects second byte (protocol ID) to be 0xA2.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// If not, use previous valid data
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (dataBytes[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">0xA2</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">uint8_t</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">sizeof</span>(dataBytes); i <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint8_t</span> hiByte <span style="color:#f92672">=</span> dataBytes[i];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint8_t</span> loByte <span style="color:#f92672">=</span> dataBytes[i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint16_t</span> servoVal;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint8_t</span> chanID <span style="color:#f92672">=</span> (hiByte <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">3</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xf</span>;  <span style="color:#75715e">// Extract channel ID
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Make sure channel ID is less than 6 (range from 0 to 6)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (chanID <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">6</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Convert two bytes in big-endian to int
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#75715e">// https://stackoverflow.com/a/2660326
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                servoVal <span style="color:#f92672">=</span> ((hiByte <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">|</span> loByte) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x07FF</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Constrain values to a range, just in case an error occurs
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">if</span> (servoVal <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">300</span>)
+</span></span><span style="display:flex;"><span>                    servoVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">300</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (servoVal <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1730</span>)
+</span></span><span style="display:flex;"><span>                    servoVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">1730</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Use equation in DSMX datasheet to convert [0 2048] values
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#75715e">// to standard PWM range [~1000ms ~2000ms] with center at 1500ms
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                servo[chanID] <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.583f</span> <span style="color:#f92672">*</span> servoVal) <span style="color:#f92672">+</span> <span style="color:#ae81ff">903</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// memcpy(dest, src, sizeof);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        memcpy(prevDataBytes, dataBytes, <span style="color:#66d9ef">sizeof</span>(dataBytes));
+</span></span><span style="display:flex;"><span>        memcpy(prevServo, servo, <span style="color:#66d9ef">sizeof</span>(servo));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Bad reading, use previous (valid) data
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        memcpy(dataBytes, prevDataBytes, <span style="color:#66d9ef">sizeof</span>(prevDataBytes));
+</span></span><span style="display:flex;"><span>        memcpy(servo, prevServo, <span style="color:#66d9ef">sizeof</span>(prevServo));
+</span></span><span style="display:flex;"><span>        numBadReadings<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="results">Results</h2>
 <p>I am very happy with the results of my code. It was able to read the six channels coming from my transmitter without error. The code is relatively light weight, both in terms of memory and computation time. Before I implement this on board my flight computer, I will likely add a few more error checks, just to be extra safe.</p>
 <h2 id="code">Code</h2>
 <p>Here is the entire Arduino code I wrote. Please cite my blog if you plan on using it in your project!</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++">
-<span style="color:#75715e">// ----------------------------------------------------------------------------
-</span><span style="color:#75715e">// READ RC CHANNEL DATA FROM SPEKTRUM DSMX REMOTE RECEIVER
-</span><span style="color:#75715e">// 
-</span><span style="color:#75715e">// Code By: Michael Wrona | mwrona.com
-</span><span style="color:#75715e">// ----------------------------------------------------------------------------
-</span><span style="color:#75715e"></span><span style="color:#75715e">/**
-</span><span style="color:#75715e"> * Sample Packet:
-</span><span style="color:#75715e"> *  00 a2 0b fe 2b fe 13 fe 21 32 1b fe 30 00 01 30
-</span><span style="color:#75715e"> *  ChID: 1     5     2     4     3     6     0
-</span><span style="color:#75715e"> */</span>
-
-
-<span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;SoftwareSerial.h&gt;</span><span style="color:#75715e">
-</span><span style="color:#75715e"></span>
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processByte</span>(<span style="color:#66d9ef">uint8_t</span> inByte);
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processFrame</span>();
-
-<span style="color:#66d9ef">uint8_t</span> byteIndex {<span style="color:#ae81ff">0</span>};
-<span style="color:#66d9ef">uint8_t</span> frameCount {<span style="color:#ae81ff">0</span>};  <span style="color:#75715e">// Number of evaluated frames
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> dataBytes[<span style="color:#ae81ff">16</span>];  <span style="color:#75715e">// Array to store the entire 16 byte packet
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> prevDataBytes[<span style="color:#ae81ff">16</span>];  <span style="color:#75715e">// Store prev. ver. in case of data read error
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> servo[<span style="color:#ae81ff">7</span>];  <span style="color:#75715e">// Array to hold channel data (7 in total)
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> numBadReadings {<span style="color:#ae81ff">0</span>};  <span style="color:#75715e">// Number of missed frames (counter)
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> prevServo[<span style="color:#ae81ff">7</span>];  <span style="color:#75715e">// Store prev. correct readings
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> prevUpdateTime {<span style="color:#ae81ff">0</span>};
-
-SoftwareSerial <span style="color:#a6e22e">Serial1</span>(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>);  <span style="color:#75715e">// Spektrum serial port
-</span><span style="color:#75715e"></span>
-
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setup</span>() {
-    <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>Serial);  <span style="color:#75715e">// Wait for serial console to open
-</span><span style="color:#75715e"></span>    Serial.begin(<span style="color:#ae81ff">115200</span>);  <span style="color:#75715e">// Arduino&#39;s port
-</span><span style="color:#75715e"></span>    Serial1.begin(<span style="color:#ae81ff">115200</span>);  <span style="color:#75715e">// Spektrum&#39;s port
-</span><span style="color:#75715e"></span>}
-
-
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loop</span>() {
-    <span style="color:#66d9ef">if</span> (Serial1.available() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
-        <span style="color:#66d9ef">uint8_t</span> incomingByte <span style="color:#f92672">=</span> Serial1.read();  <span style="color:#75715e">// Get data!
-</span><span style="color:#75715e"></span>        processByte(incomingByte);
-    }
-}
-
-
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processByte</span>(<span style="color:#66d9ef">uint8_t</span> inByte) {
-    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> currTime {millis()};
-    <span style="color:#66d9ef">if</span> (currTime <span style="color:#f92672">-</span> prevUpdateTime <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">10</span>) {
-        <span style="color:#75715e">// 22ms delay between data frames has passed, reset index
-</span><span style="color:#75715e"></span>        byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-    }
-
-    dataBytes[byteIndex] <span style="color:#f92672">=</span> inByte;  <span style="color:#75715e">// Add byte to array
-</span><span style="color:#75715e"></span>    byteIndex<span style="color:#f92672">++</span>;
-
-    <span style="color:#66d9ef">if</span> (byteIndex <span style="color:#f92672">==</span> <span style="color:#66d9ef">sizeof</span>(dataBytes)) {  <span style="color:#75715e">// If the index is at 16
-</span><span style="color:#75715e"></span>        <span style="color:#75715e">// dataBytes is full, time to parse and extract channel
-</span><span style="color:#75715e"></span>        <span style="color:#75715e">// data/servo positions
-</span><span style="color:#75715e"></span>        processFrame();
-        byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-        frameCount<span style="color:#f92672">++</span>;
-    }
-
-    <span style="color:#75715e">// currTime and prevUpdateTime will be very close when receiving bytes in
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// quick succession When the frame transmission is done, the time will
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// hold constant. Then, when a new frame comes along, the time difference
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// will be large
-</span><span style="color:#75715e"></span>    prevUpdateTime <span style="color:#f92672">=</span> currTime;
-}
-
-
-<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processFrame</span>() {
-    <span style="color:#75715e">// Expects second byte (protocol ID) to be 0xA2.
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// If not, use previous valid data
-</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (dataBytes[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">0xA2</span>) {
-        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">uint8_t</span> ii <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; ii <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">sizeof</span>(dataBytes); ii <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>) {
-            <span style="color:#66d9ef">uint8_t</span> hiByte {dataBytes[ii]};
-            <span style="color:#66d9ef">uint8_t</span> loByte {dataBytes[ii<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>]};
-            <span style="color:#66d9ef">uint16_t</span> servoVal{};
-            <span style="color:#66d9ef">uint8_t</span> chanID {(hiByte <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">3</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xf</span>};  <span style="color:#75715e">// Extract channel ID
-</span><span style="color:#75715e"></span>
-            <span style="color:#75715e">// Make sure channel ID is less than 6 (range from 0 to 6)
-</span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (chanID <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">6</span>) {
-                <span style="color:#75715e">// Convert two bytes in big-endian to int
-</span><span style="color:#75715e"></span>                <span style="color:#75715e">// https://stackoverflow.com/a/2660326
-</span><span style="color:#75715e"></span>                servoVal <span style="color:#f92672">=</span> ((hiByte <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">|</span> loByte) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x07FF</span>;
-
-                <span style="color:#75715e">// Constrain values to a range, just in case an error occurs
-</span><span style="color:#75715e"></span>                <span style="color:#66d9ef">if</span> (servoVal <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">300</span>)
-                    servoVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">300</span>;
-
-                <span style="color:#66d9ef">if</span> (servoVal <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1730</span>)
-                    servoVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">1730</span>;
-
-                <span style="color:#75715e">// Use equation in DSMX datasheet to convert [0 2048] values
-</span><span style="color:#75715e"></span>                <span style="color:#75715e">// to standard PWM range [~1000ms ~2000ms] with center at 1500ms
-</span><span style="color:#75715e"></span>                servo[chanID] <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.583f</span> <span style="color:#f92672">*</span> servoVal) <span style="color:#f92672">+</span> <span style="color:#ae81ff">903</span>;
-            }
-        }
-        <span style="color:#75715e">// memcpy(dest, src, sizeof);
-</span><span style="color:#75715e"></span>        memcpy(prevDataBytes, dataBytes, <span style="color:#66d9ef">sizeof</span>(dataBytes));
-        memcpy(prevServo, servo, <span style="color:#66d9ef">sizeof</span>(servo));
-    }
-    <span style="color:#66d9ef">else</span> {
-        <span style="color:#75715e">// Bad reading, use previous (valid) data
-</span><span style="color:#75715e"></span>        memcpy(dataBytes, prevDataBytes, <span style="color:#66d9ef">sizeof</span>(prevDataBytes));
-        memcpy(servo, prevServo, <span style="color:#66d9ef">sizeof</span>(prevServo));
-        numBadReadings<span style="color:#f92672">++</span>;
-    }
-}
-</code></pre></div>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ----------------------------------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// READ RC CHANNEL DATA FROM SPEKTRUM DSMX REMOTE RECEIVER
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Code By: Michael Wrona | mwrona.com
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// ----------------------------------------------------------------------------
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Sample Packet:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *  00 a2 0b fe 2b fe 13 fe 21 32 1b fe 30 00 01 30
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *  ChID: 1     5     2     4     3     6     0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;string.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;SoftwareSerial.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processByte</span>(<span style="color:#66d9ef">uint8_t</span> inByte);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processFrame</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">uint8_t</span> byteIndex {<span style="color:#ae81ff">0</span>};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">uint8_t</span> frameCount {<span style="color:#ae81ff">0</span>};  <span style="color:#75715e">// Number of evaluated frames
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> dataBytes[<span style="color:#ae81ff">16</span>];  <span style="color:#75715e">// Array to store the entire 16 byte packet
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">uint8_t</span> prevDataBytes[<span style="color:#ae81ff">16</span>];  <span style="color:#75715e">// Store prev. ver. in case of data read error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> servo[<span style="color:#ae81ff">7</span>];  <span style="color:#75715e">// Array to hold channel data (7 in total)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> numBadReadings {<span style="color:#ae81ff">0</span>};  <span style="color:#75715e">// Number of missed frames (counter)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">uint16_t</span> prevServo[<span style="color:#ae81ff">7</span>];  <span style="color:#75715e">// Store prev. correct readings
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> prevUpdateTime {<span style="color:#ae81ff">0</span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>SoftwareSerial <span style="color:#a6e22e">Serial1</span>(<span style="color:#ae81ff">2</span>, <span style="color:#ae81ff">3</span>);  <span style="color:#75715e">// Spektrum serial port
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setup</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>Serial);  <span style="color:#75715e">// Wait for serial console to open
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Serial.begin(<span style="color:#ae81ff">115200</span>);  <span style="color:#75715e">// Arduino&#39;s port
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    Serial1.begin(<span style="color:#ae81ff">115200</span>);  <span style="color:#75715e">// Spektrum&#39;s port
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loop</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (Serial1.available() <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">uint8_t</span> incomingByte <span style="color:#f92672">=</span> Serial1.read();  <span style="color:#75715e">// Get data!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        processByte(incomingByte);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processByte</span>(<span style="color:#66d9ef">uint8_t</span> inByte) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">long</span> currTime {millis()};
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (currTime <span style="color:#f92672">-</span> prevUpdateTime <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">10</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 22ms delay between data frames has passed, reset index
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    dataBytes[byteIndex] <span style="color:#f92672">=</span> inByte;  <span style="color:#75715e">// Add byte to array
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    byteIndex<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (byteIndex <span style="color:#f92672">==</span> <span style="color:#66d9ef">sizeof</span>(dataBytes)) {  <span style="color:#75715e">// If the index is at 16
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// dataBytes is full, time to parse and extract channel
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// data/servo positions
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        processFrame();
+</span></span><span style="display:flex;"><span>        byteIndex <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        frameCount<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// currTime and prevUpdateTime will be very close when receiving bytes in
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// quick succession When the frame transmission is done, the time will
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// hold constant. Then, when a new frame comes along, the time difference
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// will be large
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    prevUpdateTime <span style="color:#f92672">=</span> currTime;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">processFrame</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Expects second byte (protocol ID) to be 0xA2.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// If not, use previous valid data
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (dataBytes[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">==</span> <span style="color:#ae81ff">0xA2</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">uint8_t</span> ii <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span>; ii <span style="color:#f92672">&lt;</span> <span style="color:#66d9ef">sizeof</span>(dataBytes); ii <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint8_t</span> hiByte {dataBytes[ii]};
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint8_t</span> loByte {dataBytes[ii<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>]};
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint16_t</span> servoVal{};
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint8_t</span> chanID {(hiByte <span style="color:#f92672">&gt;&gt;</span> <span style="color:#ae81ff">3</span>) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0xf</span>};  <span style="color:#75715e">// Extract channel ID
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// Make sure channel ID is less than 6 (range from 0 to 6)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (chanID <span style="color:#f92672">&lt;=</span> <span style="color:#ae81ff">6</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Convert two bytes in big-endian to int
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#75715e">// https://stackoverflow.com/a/2660326
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                servoVal <span style="color:#f92672">=</span> ((hiByte <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">8</span>) <span style="color:#f92672">|</span> loByte) <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">0x07FF</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Constrain values to a range, just in case an error occurs
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">if</span> (servoVal <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">300</span>)
+</span></span><span style="display:flex;"><span>                    servoVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">300</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (servoVal <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1730</span>)
+</span></span><span style="display:flex;"><span>                    servoVal <span style="color:#f92672">=</span> <span style="color:#ae81ff">1730</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// Use equation in DSMX datasheet to convert [0 2048] values
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#75715e">// to standard PWM range [~1000ms ~2000ms] with center at 1500ms
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                servo[chanID] <span style="color:#f92672">=</span> (<span style="color:#ae81ff">0.583f</span> <span style="color:#f92672">*</span> servoVal) <span style="color:#f92672">+</span> <span style="color:#ae81ff">903</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// memcpy(dest, src, sizeof);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        memcpy(prevDataBytes, dataBytes, <span style="color:#66d9ef">sizeof</span>(dataBytes));
+</span></span><span style="display:flex;"><span>        memcpy(prevServo, servo, <span style="color:#66d9ef">sizeof</span>(servo));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Bad reading, use previous (valid) data
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        memcpy(dataBytes, prevDataBytes, <span style="color:#66d9ef">sizeof</span>(prevDataBytes));
+</span></span><span style="display:flex;"><span>        memcpy(servo, prevServo, <span style="color:#66d9ef">sizeof</span>(prevServo));
+</span></span><span style="display:flex;"><span>        numBadReadings<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div>
 		</div>
 
 		<div class="post-tags">

@@ -141,135 +141,135 @@
 <h3 id="data-collection">Data Collection</h3>
 <p>Since we are measuring the long-term stability of a gyro, we will need to collect data for a long time. I recorded <strong>stationary</strong> gyro data at 100Hz for 6 hours. I wrote some Arduino code to read the I2C sensor and print data over a serial connection so that my computer could read and write it to a CSV file.</p>
 <h4 id="arduino-code-c-simplified">Arduino Code (C++, Simplified)</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cpp" data-lang="cpp">....
-....
-
-<span style="color:#66d9ef">void</span> loop()
-{
-    now <span style="color:#f92672">=</span> millis();
-
-    <span style="color:#66d9ef">if</span> (now <span style="color:#f92672">-</span> then <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">10</span>)
-    {
-        <span style="color:#75715e">// Data in [rad/s]
-</span><span style="color:#75715e"></span>        Serial.print(Gyro.GetGx(), <span style="color:#ae81ff">6</span>); Serial.print(<span style="color:#e6db74">&#34;,&#34;</span>);
-        Serial.print(Gyro.GetGy(), <span style="color:#ae81ff">6</span>); Serial.print(<span style="color:#e6db74">&#34;,&#34;</span>);
-        Serial.println(Gyro.GetGz(), <span style="color:#ae81ff">6</span>);
-        then <span style="color:#f92672">=</span> now;
-    }
-}
-</code></pre></div><h4 id="data-logging-code-python">Data Logging Code (Python)</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> csv
-<span style="color:#f92672">import</span> serial
-
-SERIAL_PORT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;COM10&#39;</span>
-SERIAL_BAUD <span style="color:#f92672">=</span> <span style="color:#ae81ff">115200</span>
-OUT_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;gyro-data.csv&#39;</span>
-FS <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>  <span style="color:#75715e"># Sample frequency [Hz]</span>
-MEAS_DUR_SEC <span style="color:#f92672">=</span> <span style="color:#ae81ff">21600</span>  <span style="color:#75715e"># (6 hrs) Seconds to record data for</span>
-
-TS <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> FS  <span style="color:#75715e"># Sample period [s]</span>
-N_SAMPLES <span style="color:#f92672">=</span> int(MEAS_DUR_SEC <span style="color:#f92672">*</span> FS)  <span style="color:#75715e"># Number of samples to record</span>
-
-<span style="color:#75715e"># Init. serial</span>
-ser <span style="color:#f92672">=</span> serial<span style="color:#f92672">.</span>Serial(SERIAL_PORT, SERIAL_BAUD)
-ser<span style="color:#f92672">.</span>flush()
-
-<span style="color:#66d9ef">with</span> open(OUT_FILE, newline<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;&#39;</span>, mode<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;w&#39;</span>) <span style="color:#66d9ef">as</span> csvfile:
-    csvwriter <span style="color:#f92672">=</span> csv<span style="color:#f92672">.</span>writer(csvfile, delimiter<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;,&#39;</span>)
-
-    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(N_SAMPLES):
-        <span style="color:#75715e"># Read serial stream and extract data</span>
-        dataList <span style="color:#f92672">=</span> ser<span style="color:#f92672">.</span>readline()<span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#39;utf-8&#39;</span>)<span style="color:#f92672">.</span>strip(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#39;</span>)<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;,&#39;</span>)
-
-        <span style="color:#75715e"># Write data to CSV file: gx,gy,gz</span>
-        csvwriter<span style="color:#f92672">.</span>writerow(dataList)
-</code></pre></div><h3 id="allan-deviation-computation">Allan Deviation Computation</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-cpp" data-lang="cpp"><span style="display:flex;"><span>....
+</span></span><span style="display:flex;"><span>....
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> loop()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    now <span style="color:#f92672">=</span> millis();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (now <span style="color:#f92672">-</span> then <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">10</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// Data in [rad/s]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        Serial.print(Gyro.GetGx(), <span style="color:#ae81ff">6</span>); Serial.print(<span style="color:#e6db74">&#34;,&#34;</span>);
+</span></span><span style="display:flex;"><span>        Serial.print(Gyro.GetGy(), <span style="color:#ae81ff">6</span>); Serial.print(<span style="color:#e6db74">&#34;,&#34;</span>);
+</span></span><span style="display:flex;"><span>        Serial.println(Gyro.GetGz(), <span style="color:#ae81ff">6</span>);
+</span></span><span style="display:flex;"><span>        then <span style="color:#f92672">=</span> now;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="data-logging-code-python">Data Logging Code (Python)</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> csv
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> serial
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>SERIAL_PORT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;COM10&#39;</span>
+</span></span><span style="display:flex;"><span>SERIAL_BAUD <span style="color:#f92672">=</span> <span style="color:#ae81ff">115200</span>
+</span></span><span style="display:flex;"><span>OUT_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;gyro-data.csv&#39;</span>
+</span></span><span style="display:flex;"><span>FS <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>  <span style="color:#75715e"># Sample frequency [Hz]</span>
+</span></span><span style="display:flex;"><span>MEAS_DUR_SEC <span style="color:#f92672">=</span> <span style="color:#ae81ff">21600</span>  <span style="color:#75715e"># (6 hrs) Seconds to record data for</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>TS <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> FS  <span style="color:#75715e"># Sample period [s]</span>
+</span></span><span style="display:flex;"><span>N_SAMPLES <span style="color:#f92672">=</span> int(MEAS_DUR_SEC <span style="color:#f92672">*</span> FS)  <span style="color:#75715e"># Number of samples to record</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Init. serial</span>
+</span></span><span style="display:flex;"><span>ser <span style="color:#f92672">=</span> serial<span style="color:#f92672">.</span>Serial(SERIAL_PORT, SERIAL_BAUD)
+</span></span><span style="display:flex;"><span>ser<span style="color:#f92672">.</span>flush()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">with</span> open(OUT_FILE, newline<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;&#39;</span>, mode<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;w&#39;</span>) <span style="color:#66d9ef">as</span> csvfile:
+</span></span><span style="display:flex;"><span>    csvwriter <span style="color:#f92672">=</span> csv<span style="color:#f92672">.</span>writer(csvfile, delimiter<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;,&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> _ <span style="color:#f92672">in</span> range(N_SAMPLES):
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Read serial stream and extract data</span>
+</span></span><span style="display:flex;"><span>        dataList <span style="color:#f92672">=</span> ser<span style="color:#f92672">.</span>readline()<span style="color:#f92672">.</span>decode(<span style="color:#e6db74">&#39;utf-8&#39;</span>)<span style="color:#f92672">.</span>strip(<span style="color:#e6db74">&#39;</span><span style="color:#ae81ff">\r\n</span><span style="color:#e6db74">&#39;</span>)<span style="color:#f92672">.</span>split(<span style="color:#e6db74">&#39;,&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e"># Write data to CSV file: gx,gy,gz</span>
+</span></span><span style="display:flex;"><span>        csvwriter<span style="color:#f92672">.</span>writerow(dataList)
+</span></span></code></pre></div><h3 id="allan-deviation-computation">Allan Deviation Computation</h3>
 <p>We will be computing the Allan deviation of gyro angle data in degrees. First, I imported the gyro rate data into numpy arrays. Then, I converted the raw gyro rate data from <code>$rad/s$</code> to <code>$deg/s$</code>. Next, I Euler integrated the rate data to compute gyro orientation data in <code>$deg$</code> by computing the cumulative sum (<code>numpy.cumsum()</code>) of the data and multiplying it by the sample period (0.01sec). I then passed the gyro angle data to my Allan deviation function and computed the Allan variance in <code>$deg/s$</code>. Finally, I plotted the data on a log-scale plot.</p>
 <h4 id="allan-variance-code-python">Allan Variance Code (Python)</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
-<span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
-
-
-<span style="color:#75715e"># Config. params</span>
-DATA_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;gyro-data.csv&#39;</span>  <span style="color:#75715e"># CSV data file &#34;gx,gy,gz&#34;</span>
-fs <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>  <span style="color:#75715e"># Sample rate [Hz]</span>
-
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
-    <span style="color:#f92672">....</span>
-
-<span style="color:#75715e"># Load CSV into np array</span>
-dataArr <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>genfromtxt(DATA_FILE, delimiter<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;,&#39;</span>)
-ts <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> fs
-
-<span style="color:#75715e"># Separate into arrays</span>
-gx <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180.0</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)  <span style="color:#75715e"># [deg/s]</span>
-gy <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">1</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180.0</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)
-gz <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">2</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180.0</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)
-
-<span style="color:#75715e"># Calculate gyro angles</span>
-thetax <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>cumsum(gx) <span style="color:#f92672">*</span> ts  <span style="color:#75715e"># [deg]</span>
-thetay <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>cumsum(gy) <span style="color:#f92672">*</span> ts
-thetaz <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>cumsum(gz) <span style="color:#f92672">*</span> ts
-
-<span style="color:#75715e"># Compute Allan deviations</span>
-(taux, adx) <span style="color:#f92672">=</span> AllanDeviation(thetax, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
-(tauy, ady) <span style="color:#f92672">=</span> AllanDeviation(thetay, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
-(tauz, adz) <span style="color:#f92672">=</span> AllanDeviation(thetaz, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
-
-<span style="color:#75715e"># Plot data on log-scale</span>
-plt<span style="color:#f92672">.</span>figure()
-plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Gyro Allan Deviations&#39;</span>)
-plt<span style="color:#f92672">.</span>plot(taux, adx, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gx&#39;</span>)
-plt<span style="color:#f92672">.</span>plot(tauy, ady, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gy&#39;</span>)
-plt<span style="color:#f92672">.</span>plot(tauz, adz, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gz&#39;</span>)
-plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">r</span><span style="color:#e6db74">&#39;$\tau$ [sec]&#39;</span>)
-plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Deviation [deg/sec]&#39;</span>)
-plt<span style="color:#f92672">.</span>grid(<span style="color:#66d9ef">True</span>, which<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;both&#34;</span>, ls<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-&#34;</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;0.65&#39;</span>)
-plt<span style="color:#f92672">.</span>legend()
-plt<span style="color:#f92672">.</span>xscale(<span style="color:#e6db74">&#39;log&#39;</span>)
-plt<span style="color:#f92672">.</span>yscale(<span style="color:#e6db74">&#39;log&#39;</span>)
-plt<span style="color:#f92672">.</span>show()
-</code></pre></div><h4 id="allan-deviation-algorithm-python">Allan Deviation Algorithm (Python)</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
-
-<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr: np<span style="color:#f92672">.</span>ndarray, fs: float, maxNumM: int<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
-    <span style="color:#e6db74">&#34;&#34;&#34;Compute the Allan deviation (sigma) of time-series data.
-</span><span style="color:#e6db74">
-</span><span style="color:#e6db74">    Algorithm obtained from Mathworks:
-</span><span style="color:#e6db74">    https://www.mathworks.com/help/fusion/ug/inertial-sensor-noise-analysis-using-allan-variance.html
-</span><span style="color:#e6db74">
-</span><span style="color:#e6db74">    Args
-</span><span style="color:#e6db74">    ----
-</span><span style="color:#e6db74">        dataArr: 1D data array
-</span><span style="color:#e6db74">        fs: Data sample frequency in Hz
-</span><span style="color:#e6db74">        maxNumM: Number of output points
-</span><span style="color:#e6db74">    
-</span><span style="color:#e6db74">    Returns
-</span><span style="color:#e6db74">    -------
-</span><span style="color:#e6db74">        (taus, allanDev): Tuple of results
-</span><span style="color:#e6db74">        taus (numpy.ndarray): Array of tau values
-</span><span style="color:#e6db74">        allanDev (numpy.ndarray): Array of computed Allan deviations
-</span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
-    ts <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> fs
-    N <span style="color:#f92672">=</span> len(dataArr)
-    Mmax <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">**</span>np<span style="color:#f92672">.</span>floor(np<span style="color:#f92672">.</span>log2(N <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>))
-    M <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>logspace(np<span style="color:#f92672">.</span>log10(<span style="color:#ae81ff">1</span>), np<span style="color:#f92672">.</span>log10(Mmax), num<span style="color:#f92672">=</span>maxNumM)
-    M <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>ceil(M)  <span style="color:#75715e"># Round up to integer</span>
-    M <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(M)  <span style="color:#75715e"># Remove duplicates</span>
-    taus <span style="color:#f92672">=</span> M <span style="color:#f92672">*</span> ts  <span style="color:#75715e"># Compute &#39;cluster durations&#39; tau</span>
-
-    <span style="color:#75715e"># Compute Allan variance</span>
-    allanVar <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>zeros(len(M))
-    <span style="color:#66d9ef">for</span> i, mi <span style="color:#f92672">in</span> enumerate(M):
-        twoMi <span style="color:#f92672">=</span> int(<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> mi)
-        mi <span style="color:#f92672">=</span> int(mi)
-        allanVar[i] <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>sum(
-            (dataArr[twoMi:N] <span style="color:#f92672">-</span> (<span style="color:#ae81ff">2.0</span> <span style="color:#f92672">*</span> dataArr[mi:N<span style="color:#f92672">-</span>mi]) <span style="color:#f92672">+</span> dataArr[<span style="color:#ae81ff">0</span>:N<span style="color:#f92672">-</span>twoMi])<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>
-        )
-    
-    allanVar <span style="color:#f92672">/=</span> (<span style="color:#ae81ff">2.0</span> <span style="color:#f92672">*</span> taus<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">*</span> (N <span style="color:#f92672">-</span> (<span style="color:#ae81ff">2.0</span> <span style="color:#f92672">*</span> M))
-    <span style="color:#66d9ef">return</span> (taus, np<span style="color:#f92672">.</span>sqrt(allanVar))  <span style="color:#75715e"># Return deviation (dev = sqrt(var))</span>
-</code></pre></div><h2 id="interpreting-allan-deviation-plots">Interpreting Allan Deviation Plots</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Config. params</span>
+</span></span><span style="display:flex;"><span>DATA_FILE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;gyro-data.csv&#39;</span>  <span style="color:#75715e"># CSV data file &#34;gx,gy,gz&#34;</span>
+</span></span><span style="display:flex;"><span>fs <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>  <span style="color:#75715e"># Sample rate [Hz]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">....</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Load CSV into np array</span>
+</span></span><span style="display:flex;"><span>dataArr <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>genfromtxt(DATA_FILE, delimiter<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;,&#39;</span>)
+</span></span><span style="display:flex;"><span>ts <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> fs
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Separate into arrays</span>
+</span></span><span style="display:flex;"><span>gx <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">0</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180.0</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)  <span style="color:#75715e"># [deg/s]</span>
+</span></span><span style="display:flex;"><span>gy <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">1</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180.0</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)
+</span></span><span style="display:flex;"><span>gz <span style="color:#f92672">=</span> dataArr[:, <span style="color:#ae81ff">2</span>] <span style="color:#f92672">*</span> (<span style="color:#ae81ff">180.0</span> <span style="color:#f92672">/</span> np<span style="color:#f92672">.</span>pi)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Calculate gyro angles</span>
+</span></span><span style="display:flex;"><span>thetax <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>cumsum(gx) <span style="color:#f92672">*</span> ts  <span style="color:#75715e"># [deg]</span>
+</span></span><span style="display:flex;"><span>thetay <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>cumsum(gy) <span style="color:#f92672">*</span> ts
+</span></span><span style="display:flex;"><span>thetaz <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>cumsum(gz) <span style="color:#f92672">*</span> ts
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Compute Allan deviations</span>
+</span></span><span style="display:flex;"><span>(taux, adx) <span style="color:#f92672">=</span> AllanDeviation(thetax, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
+</span></span><span style="display:flex;"><span>(tauy, ady) <span style="color:#f92672">=</span> AllanDeviation(thetay, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
+</span></span><span style="display:flex;"><span>(tauz, adz) <span style="color:#f92672">=</span> AllanDeviation(thetaz, fs, maxNumM<span style="color:#f92672">=</span><span style="color:#ae81ff">200</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Plot data on log-scale</span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>figure()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>title(<span style="color:#e6db74">&#39;Gyro Allan Deviations&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>plot(taux, adx, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gx&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>plot(tauy, ady, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gy&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>plot(tauz, adz, label<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;gz&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xlabel(<span style="color:#e6db74">r</span><span style="color:#e6db74">&#39;$\tau$ [sec]&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>ylabel(<span style="color:#e6db74">&#39;Deviation [deg/sec]&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>grid(<span style="color:#66d9ef">True</span>, which<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;both&#34;</span>, ls<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-&#34;</span>, color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;0.65&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>legend()
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>xscale(<span style="color:#e6db74">&#39;log&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>yscale(<span style="color:#e6db74">&#39;log&#39;</span>)
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>show()
+</span></span></code></pre></div><h4 id="allan-deviation-algorithm-python">Allan Deviation Algorithm (Python)</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">AllanDeviation</span>(dataArr: np<span style="color:#f92672">.</span>ndarray, fs: float, maxNumM: int<span style="color:#f92672">=</span><span style="color:#ae81ff">100</span>):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;Compute the Allan deviation (sigma) of time-series data.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Algorithm obtained from Mathworks:
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    https://www.mathworks.com/help/fusion/ug/inertial-sensor-noise-analysis-using-allan-variance.html
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Args
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    ----
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        dataArr: 1D data array
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        fs: Data sample frequency in Hz
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        maxNumM: Number of output points
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    Returns
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    -------
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        (taus, allanDev): Tuple of results
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        taus (numpy.ndarray): Array of tau values
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        allanDev (numpy.ndarray): Array of computed Allan deviations
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    ts <span style="color:#f92672">=</span> <span style="color:#ae81ff">1.0</span> <span style="color:#f92672">/</span> fs
+</span></span><span style="display:flex;"><span>    N <span style="color:#f92672">=</span> len(dataArr)
+</span></span><span style="display:flex;"><span>    Mmax <span style="color:#f92672">=</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">**</span>np<span style="color:#f92672">.</span>floor(np<span style="color:#f92672">.</span>log2(N <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>))
+</span></span><span style="display:flex;"><span>    M <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>logspace(np<span style="color:#f92672">.</span>log10(<span style="color:#ae81ff">1</span>), np<span style="color:#f92672">.</span>log10(Mmax), num<span style="color:#f92672">=</span>maxNumM)
+</span></span><span style="display:flex;"><span>    M <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>ceil(M)  <span style="color:#75715e"># Round up to integer</span>
+</span></span><span style="display:flex;"><span>    M <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>unique(M)  <span style="color:#75715e"># Remove duplicates</span>
+</span></span><span style="display:flex;"><span>    taus <span style="color:#f92672">=</span> M <span style="color:#f92672">*</span> ts  <span style="color:#75715e"># Compute &#39;cluster durations&#39; tau</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Compute Allan variance</span>
+</span></span><span style="display:flex;"><span>    allanVar <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>zeros(len(M))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i, mi <span style="color:#f92672">in</span> enumerate(M):
+</span></span><span style="display:flex;"><span>        twoMi <span style="color:#f92672">=</span> int(<span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> mi)
+</span></span><span style="display:flex;"><span>        mi <span style="color:#f92672">=</span> int(mi)
+</span></span><span style="display:flex;"><span>        allanVar[i] <span style="color:#f92672">=</span> np<span style="color:#f92672">.</span>sum(
+</span></span><span style="display:flex;"><span>            (dataArr[twoMi:N] <span style="color:#f92672">-</span> (<span style="color:#ae81ff">2.0</span> <span style="color:#f92672">*</span> dataArr[mi:N<span style="color:#f92672">-</span>mi]) <span style="color:#f92672">+</span> dataArr[<span style="color:#ae81ff">0</span>:N<span style="color:#f92672">-</span>twoMi])<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    allanVar <span style="color:#f92672">/=</span> (<span style="color:#ae81ff">2.0</span> <span style="color:#f92672">*</span> taus<span style="color:#f92672">**</span><span style="color:#ae81ff">2</span>) <span style="color:#f92672">*</span> (N <span style="color:#f92672">-</span> (<span style="color:#ae81ff">2.0</span> <span style="color:#f92672">*</span> M))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (taus, np<span style="color:#f92672">.</span>sqrt(allanVar))  <span style="color:#75715e"># Return deviation (dev = sqrt(var))</span>
+</span></span></code></pre></div><h2 id="interpreting-allan-deviation-plots">Interpreting Allan Deviation Plots</h2>
 <p>Allan deviation plots are always given on a log scale plot (X and Y axes are log-scale). The X-axis is typically in units of seconds or hours, and the Y-axis Allan deviation in units of <code>$deg/hr$</code> or <code>$deg/sec$</code>. Our code&rsquo;s plot is in units of seconds and <code>$deg/sec$</code>. I&rsquo;ll use the X-gyro (gx) data for example calculations.</p>
 
 <figure class="center" >
