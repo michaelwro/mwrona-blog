@@ -1,2 +1,2 @@
-FROM docker.io/library/node:lts-alpine
-RUN apk add --no-cache bash git
+FROM docker.io/library/node:lts-slim
+RUN apt-get update && apt-get install -y git

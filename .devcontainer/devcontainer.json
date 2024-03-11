@@ -1,5 +1,7 @@
 {
     "build": {
         "dockerfile": "Dockerfile"
-    }
+    },
+    "postStartCommand": "npm install -g npm && npm install",
+    "forwardPorts": [1313]
 }

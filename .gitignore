@@ -130,3 +130,4 @@ dist
 .pnp.*
 
 .hugo_build.lock
+public/
